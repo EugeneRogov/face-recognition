@@ -28,7 +28,7 @@ public class MainActivity extends Activity
 	private static final int REQUEST_SETTINGS = 1;
 	private static final int REQUEST_OPTIONS = 2;
 
-	private static final String TAG = "MainActivity face_sdk_demo";
+	private static final String TAG = "MainActivity";
 
 	private TheCamera camera = null;
 	private Demo demo = null;
@@ -112,6 +112,8 @@ public class MainActivity extends Activity
 	{
 		setContentView(R.layout.splash);
 
+		Log.i(TAG, getApplicationInfo().nativeLibraryDir.toString());
+
 		FacerecService service = FacerecService.createService(
 			getApplicationInfo().nativeLibraryDir + "/libfacerec.so",
 			"/sdcard/face_recognition/conf/facerec",
@@ -124,7 +126,9 @@ public class MainActivity extends Activity
 		Log.i(TAG, "license_state.hardware_reg      = " + license_state.hardware_reg);
 
 
-		new Thread(new LoadThread(this, service)).start();
+
+
+//		new Thread(new LoadThread(this, service)).start();
 	}
 
 	@Override
