@@ -125,10 +125,7 @@ public class MainActivity extends Activity
 		Log.i(TAG, "license_state.ios_app_id        = " + license_state.ios_app_id);
 		Log.i(TAG, "license_state.hardware_reg      = " + license_state.hardware_reg);
 
-
-
-
-//		new Thread(new LoadThread(this, service)).start();
+		new Thread(new LoadThread(this, service)).start();
 	}
 
 	@Override
