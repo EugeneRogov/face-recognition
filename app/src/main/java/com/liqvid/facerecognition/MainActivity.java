@@ -61,9 +61,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // if directory with online licence exists
-        // then use it
-        // otherwise use default offline licence
+        // if directory with online licence exists then use it otherwise use default offline licence
         String buf = "/sdcard/face_recognition/online_license";
         if ((new File(buf)).exists()) {
             online_licence_dir = buf;
@@ -71,8 +69,7 @@ public class MainActivity extends Activity {
             online_licence_dir = "";
         }
 
-
-        // view persmissions status
+        // view permissions status
         setContentView(R.layout.permissions);
 
         // check and request permissions
@@ -110,15 +107,11 @@ public class MainActivity extends Activity {
         Log.i(TAG, "license_state.ios_app_id        = " + license_state.ios_app_id);
         Log.i(TAG, "license_state.hardware_reg      = " + license_state.hardware_reg);
 
-
         new Thread(new LoadThread(this, service)).start();
     }
 
     @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            String[] permissions,
-            int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         boolean ask_again = false;
 
         for (int i = 0; i < permissions.length; ++i) {
@@ -145,30 +138,29 @@ public class MainActivity extends Activity {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
-
         if (camera != null && demo != null) {
             camera.open(demo, camera_id, im_width, im_height);
         }
     }
 
-
     @Override
     protected void onPause() {
-        if (camera != null) camera.close();
+        if (camera != null)
+            camera.close();
 
         super.onPause();
     }
 
-
     @Override
     protected void onDestroy() {
-        if (camera != null) camera.close();
+        if (camera != null)
+            camera.close();
 
-        if (demo != null) demo.dispose();
+        if (demo != null)
+            demo.dispose();
 
         super.onDestroy();
     }
@@ -176,12 +168,10 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
 
                 case REQUEST_SETTINGS:
-
                     camera_id = data.getIntExtra("cam_id", camera_id);
                     String stemp = data.getStringExtra("selected_resolution");
 
@@ -189,25 +179,19 @@ public class MainActivity extends Activity {
                         demo.updateCapturer();
                         setNewResolution(stemp);
                     }
-
-
                     break;
 
                 case REQUEST_OPTIONS:
-
                     flags = data.getBooleanArrayExtra("flags");
                     faceCutTypeId = data.getIntExtra("faceCutTypeId", 0);
 
                     demo.setOptions(flags, faceCutTypeId);
-
                     break;
             }
         }
     }
 
-
     private static class LoadThread implements Runnable {
-
         MainActivity ma;
         FacerecService service;
 
@@ -239,9 +223,7 @@ public class MainActivity extends Activity {
         }
     }
 
-
     public void showForm() {
-
         setContentView(R.layout.main_activity);
 
         TextView textView = (TextView) findViewById(R.id.textView);
@@ -279,27 +261,19 @@ public class MainActivity extends Activity {
         });
 
         camera.open(demo, camera_id, im_width, im_height);
-
     }
 
-
     private void setNewResolution(String resol) {
-
         String[] tempStr = resol.split("x");
         im_width = Integer.parseInt(tempStr[0]);
         im_height = Integer.parseInt(tempStr[1]);
-
     }
-
 
     private String getStringResolution() {
         return Integer.toString(im_width) + "x" + Integer.toString(im_height);
     }
 
-
-    private static void exceptionHappensDo(
-            final Activity activity,
-            final Exception e) {
+    private static void exceptionHappensDo(final Activity activity, final Exception e) {
         Intent toErrorIntent = new Intent(activity, ErrorActivity.class);
         toErrorIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (e instanceof SDKException) {
