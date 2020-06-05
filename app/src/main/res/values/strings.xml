@@ -41,5 +41,6 @@
     </string>
     <string name="error">Error!</string>
     <string name="close">Close</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
+    <string name="face_cut">Face cut:</string>
 </resources>
