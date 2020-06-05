@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.vdt.face_recognition.sdk.FacerecService
@@ -18,8 +19,7 @@ import com.vdt.face_recognition.sdk.SDKException
 import java.io.File
 import java.util.*
 
-class MainActivity : Activity() {
-
+class MainActivity : AppCompatActivity() {
     companion object {
         private const val REQUEST_SETTINGS = 1
         private const val REQUEST_OPTIONS = 2
@@ -176,7 +176,7 @@ class MainActivity : Activity() {
                     cameraId = data!!.getIntExtra("cam_id", cameraId)
                     val stemp = data.getStringExtra("selected_resolution")
                     if (stemp != stringResolution) {
-                        demo!!.updateCapturer()
+                        demo!!.updateCapture()
                         setNewResolution(stemp)
                     }
                 }

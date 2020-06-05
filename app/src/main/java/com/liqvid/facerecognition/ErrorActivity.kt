@@ -1,14 +1,13 @@
 package com.liqvid.facerecognition
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 
-class ErrorActivity : Activity() {
+class ErrorActivity : AppCompatActivity(R.layout.error_activity) {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.error_activity)
 
         val getValuesIntent = intent
         val message = getValuesIntent.getStringExtra("error_activity message")

@@ -40,15 +40,15 @@ public class Demo {
     private EmotionsEstimator emotionsEstimator = null;
     private FaceQualityEstimator faceQualityEstimator = null;
 
-    private boolean flag_rectangle = true;
-    private boolean flag_angles = true;
-    private boolean flag_quality = false;
-    private boolean flag_liveness = false;
-    private boolean flag_age_and_gender = false;
-    private boolean flag_points = true;
-    private boolean flag_face_quality = false;
-    private boolean flag_angles_vectors = true;
-    private boolean flag_emotions = false;
+    private boolean flagRectangle = true;
+    private boolean flagAngles = true;
+    private boolean flagQuality = false;
+    private boolean flagLiveness = false;
+    private boolean flagAgeAndGender = false;
+    private boolean flagPoints = true;
+    private boolean flagFaceQuality = false;
+    private boolean flagAnglesVectors = true;
+    private boolean flagEmotions = false;
 
     private HashMap<Integer, LivenessEstimator> id2le = new HashMap<Integer, LivenessEstimator>();
     private RawSample.FaceCutType faceCutType = null;
@@ -57,26 +57,24 @@ public class Demo {
         this.activity = activity;
         this.service = service;
 
-        FacerecService.Config capturer_conf = service.new Config("fda_tracker_capturer.xml");
-        capturer_conf.overrideParameter("downscale_rawsamples_to_preferred_size", 0);
-        capturer = service.createCapturer(capturer_conf);
+        FacerecService.Config captureConf = service.new Config("fda_tracker_capturer.xml");
+        captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0);
+        capturer = service.createCapturer(captureConf);
         qualityEstimator = service.createQualityEstimator("quality_estimator.xml");
         ageGenderEstimator = service.createAgeGenderEstimator("age_gender_estimator.xml");
         emotionsEstimator = service.createEmotionsEstimator("emotions_estimator.xml");
         faceQualityEstimator = service.createFaceQualityEstimator("face_quality_estimator.xml");
     }
 
-    public void updateCapturer() {
-        // force free resources
-        // otherwise licence error may occur
-        // when create sdk object in next time
+    public void updateCapture() {
+        // force free resources otherwise licence error may occur when create sdk object in next time
         if (capturer != null) {
             capturer.dispose();
         }
 
-        FacerecService.Config capturer_conf = service.new Config("fda_tracker_capturer.xml");
-        capturer_conf.overrideParameter("downscale_rawsamples_to_preferred_size", 0);
-        capturer = service.createCapturer(capturer_conf);
+        FacerecService.Config captureConf = service.new Config("fda_tracker_capturer.xml");
+        captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0);
+        capturer = service.createCapturer(captureConf);
     }
 
     public void setTextView() {
@@ -98,27 +96,23 @@ public class Demo {
 
         String text = "";
 
-        RawImage rawImage = new RawImage(
-                width,
-                height,
-                RawImage.Format.FORMAT_YUV_NV21,
-                data);
+        RawImage rawImage = new RawImage(width, height, RawImage.Format.FORMAT_YUV_NV21, data);
         Vector<RawSample> samples = capturer.capture(rawImage);
 
         if (samples.isEmpty())
             return;
 
-        //output info for one person
+        // output info for one person
         RawSample sample = samples.get(0);
 
         //face rectangle
-        if (flag_rectangle) {
+        if (flagRectangle) {
             RawSample.Rectangle rect = sample.getRectangle();
             canvas.drawRect(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height, paint);
         }
 
-        //head angles
-        if (flag_angles) {
+        // head angles
+        if (flagAngles) {
             RawSample.Angles angles = sample.getAngles();
             text += "Angles: \n\tyaw:\t" + angles.yaw +
                     "\n\tpitch:\t" + angles.pitch +
@@ -126,8 +120,8 @@ public class Demo {
                     "\n";
         }
 
-        //quality
-        if (flag_quality) {
+        // quality
+        if (flagQuality) {
             QualityEstimator.Quality quality = qualityEstimator.estimateQuality(sample);
             text += "Quality: \n\tlighting:\t" + quality.lighting +
                     "\n\tnoise:\t" + quality.noise +
@@ -136,8 +130,8 @@ public class Demo {
                     "\n";
         }
 
-        //liveness
-        if (flag_liveness) {
+        // liveness
+        if (flagLiveness) {
             // here we get/create the liveness estimator that work with this face
             final int id = sample.getID();
             if (!id2le.containsKey(id)) {
@@ -153,8 +147,8 @@ public class Demo {
             text += "Liveness: " + liveness.name() + "\n";
         }
 
-        //age and gender
-        if (flag_age_and_gender) {
+        // age and gender
+        if (flagAgeAndGender) {
             AgeGenderEstimator.AgeGender ageGender = ageGenderEstimator.estimateAgeGender(sample);
 
             text += "Age: " + (int) (ageGender.age_years + 0.5) + " years - ";
@@ -183,7 +177,7 @@ public class Demo {
             }
         }
 
-        //crops
+        // crops
         if (faceCutType != null) {
             Paint bitmap_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             Paint cut_border_paint = new Paint();
@@ -207,11 +201,11 @@ public class Demo {
             canvas.drawRect(dstRect, cut_border_paint);
         }
 
-        //points
-        //all points - red
-        //left eye - green
-        //right eye - yellow
-        if (flag_points) {
+        // points
+        // all points - red
+        // left eye - green
+        // right eye - yellow
+        if (flagPoints) {
             Vector<Point> points = sample.getLandmarks();
             Point leftEye = sample.getLeftEye();
             Point rightEye = sample.getRightEye();
@@ -227,14 +221,14 @@ public class Demo {
             canvas.drawCircle(rightEye.x, rightEye.y, 3, paint);
         }
 
-        //face quality
-        if (flag_face_quality) {
+        // face quality
+        if (flagFaceQuality) {
             float faceQuality = faceQualityEstimator.estimateQuality(sample);
             text += "Face quality: " + faceQuality + "\n";
         }
 
-        //angles vectors
-        if (flag_angles_vectors) {
+        // angles vectors
+        if (flagAnglesVectors) {
             Point lEye = sample.getLeftEye();
             Point rEye = sample.getRightEye();
             RawSample.Angles head_angles = sample.getAngles();
@@ -277,7 +271,7 @@ public class Demo {
         }
 
         //emotions
-        if (flag_emotions) {
+        if (flagEmotions) {
             Vector<EmotionsEstimator.EmotionConfidence> emotionsConf = emotionsEstimator.estimateEmotions(sample);
 
             activity.findViewById(R.id.emotions).setVisibility(View.VISIBLE);
@@ -311,15 +305,15 @@ public class Demo {
 
     public void setOptions(boolean[] flags, int faceCutTypeId) {
         if (flags != null) {
-            flag_rectangle = flags[0];
-            flag_angles = flags[1];
-            flag_quality = flags[2];
-            flag_liveness = flags[3];
-            flag_age_and_gender = flags[4];
-            flag_points = flags[5];
-            flag_face_quality = flags[6];
-            flag_angles_vectors = flags[7];
-            flag_emotions = flags[8];
+            flagRectangle = flags[0];
+            flagAngles = flags[1];
+            flagQuality = flags[2];
+            flagLiveness = flags[3];
+            flagAgeAndGender = flags[4];
+            flagPoints = flags[5];
+            flagFaceQuality = flags[6];
+            flagAnglesVectors = flags[7];
+            flagEmotions = flags[8];
         }
 
         faceCutType = (faceCutTypeId > 0) ? RawSample.FaceCutType.values()[faceCutTypeId - 1] : null;
@@ -328,15 +322,15 @@ public class Demo {
 
     public boolean[] getFlags() {
         boolean[] flags = {
-                flag_rectangle,
-                flag_angles,
-                flag_quality,
-                flag_liveness,
-                flag_age_and_gender,
-                flag_points,
-                flag_face_quality,
-                flag_angles_vectors,
-                flag_emotions};
+                flagRectangle,
+                flagAngles,
+                flagQuality,
+                flagLiveness,
+                flagAgeAndGender,
+                flagPoints,
+                flagFaceQuality,
+                flagAnglesVectors,
+                flagEmotions};
 
         return flags;
     }
