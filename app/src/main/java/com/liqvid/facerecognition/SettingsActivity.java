@@ -34,7 +34,7 @@ public class SettingsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings);
+        setContentView(R.layout.settings_activity);
 
         //get previous or default values
         Intent getValuesIntent = getIntent();
@@ -55,7 +55,7 @@ public class SettingsActivity extends Activity {
             Log.e(TAG, "No available cameras");
             Intent toErrorIntent = new Intent(this, ErrorActivity.class);
             toErrorIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            toErrorIntent.putExtra("error message", "No available cameras");
+            toErrorIntent.putExtra("error_activity message", "No available cameras");
             startActivity(toErrorIntent);
             finish();
             return;
@@ -128,14 +128,14 @@ public class SettingsActivity extends Activity {
         }
     }
 
-    private void setSpinnerResolutions(String defualt_resolution) {
+    private void setSpinnerResolutions(String defaultResolution) {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, cams_resolutions.get(selected_camera_id).toArray(new String[0]));
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
 
-        int spinner_index = cams_resolutions.get(selected_camera_id).indexOf(defualt_resolution);
-        spinner_index = (spinner_index == -1) ? 0 : spinner_index;
-        spinner.setSelection(spinner_index);
+        int spinnerIndex = cams_resolutions.get(selected_camera_id).indexOf(defaultResolution);
+        spinnerIndex = (spinnerIndex == -1) ? 0 : spinnerIndex;
+        spinner.setSelection(spinnerIndex);
     }
 
 }

@@ -164,9 +164,9 @@ public class TheCamera implements Camera.PreviewCallback {
             toErrorIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             if (e instanceof SDKException) {
                 SDKException sdke = (SDKException) e;
-                toErrorIntent.putExtra("error message", "code: " + String.format("0x%08X", sdke.code()) + "\n" + sdke.getMessage());
+                toErrorIntent.putExtra("error_activity message", "code: " + String.format("0x%08X", sdke.code()) + "\n" + sdke.getMessage());
             } else {
-                toErrorIntent.putExtra("error message", e.getMessage());
+                toErrorIntent.putExtra("error_activity message", e.getMessage());
             }
             e.printStackTrace();
             activity.startActivity(toErrorIntent);

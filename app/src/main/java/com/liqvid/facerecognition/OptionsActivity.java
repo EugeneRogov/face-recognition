@@ -27,7 +27,7 @@ public class OptionsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.options);
+        setContentView(R.layout.options_activity);
 
         CheckBox cb_rectangle = (CheckBox) findViewById(R.id.rectangle);
         CheckBox cb_angles = (CheckBox) findViewById(R.id.angles);

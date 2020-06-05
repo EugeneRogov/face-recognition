@@ -1,19 +1,19 @@
 <resources>
     <string name="app_name">Face recognition</string>
 
-    <!-- main activity -->
+    <!-- main_activity activity -->
     <string name="quit_button_text">quit</string>
     <string name="options_button_text">options</string>
     <string name="settings_button_text">choose camera</string>
 
 
-    <!-- settings activity -->
+    <!-- settings_activity activity -->
     <string name="camera0_radio_button">camera 0</string>
     <string name="camera1_radio_button">camera 1</string>
     <string name="camera2_radio_button">camera 2</string>
 
 
-    <!-- options activity -->
+    <!-- options_activity activity -->
     <string name="rectangle_check_box_text">rectangle</string>
     <string name="angles_check_box_text">angles</string>
     <string name="quality_check_box_text">quality</string>
@@ -39,4 +39,7 @@
     <string name="explain_READ_PHONE_STATE">
         On newer androids Face SDK hardware signature computation may fail without this permission.
     </string>
+    <string name="error">Error!</string>
+    <string name="close">Close</string>
+    <string name="ok">ok</string>
 </resources>
