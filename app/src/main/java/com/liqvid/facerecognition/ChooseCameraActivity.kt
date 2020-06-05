@@ -8,10 +8,10 @@ import android.view.View
 import android.widget.*
 import java.util.*
 
-class SettingsActivity : Activity() {
+class ChooseCameraActivity : Activity() {
 
     companion object {
-        val TAG: String = SettingsActivity::class.java.simpleName
+        val TAG: String = ChooseCameraActivity::class.java.simpleName
     }
 
     private val rbList = ArrayList<RadioButton?>()
@@ -26,7 +26,7 @@ class SettingsActivity : Activity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+        setContentView(R.layout.choose_camera_activity)
 
         //get previous or default values
         val getValuesIntent = intent

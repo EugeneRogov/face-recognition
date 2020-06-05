@@ -168,11 +168,12 @@ class MainActivity : Activity() {
         super.onDestroy()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_SETTINGS -> {
-                    cameraId = data.getIntExtra("cam_id", cameraId)
+                    cameraId = data!!.getIntExtra("cam_id", cameraId)
                     val stemp = data.getStringExtra("selected_resolution")
                     if (stemp != stringResolution) {
                         demo!!.updateCapturer()
@@ -180,7 +181,7 @@ class MainActivity : Activity() {
                     }
                 }
                 REQUEST_OPTIONS -> {
-                    flags = data.getBooleanArrayExtra("flags")
+                    flags = data!!.getBooleanArrayExtra("flags")
                     faceCutTypeId = data.getIntExtra("faceCutTypeId", 0)
                     demo!!.setOptions(flags, faceCutTypeId)
                 }
@@ -227,7 +228,7 @@ class MainActivity : Activity() {
 
         val settingsButton = findViewById<View>(R.id.settings_button) as Button
         settingsButton.setOnClickListener {
-            val toSettingsIntent = Intent(applicationContext, SettingsActivity::class.java)
+            val toSettingsIntent = Intent(applicationContext, ChooseCameraActivity::class.java)
             toSettingsIntent.putExtra("selected_camera_id", cameraId)
             toSettingsIntent.putExtra("selected_resolution", stringResolution)
             startActivityForResult(toSettingsIntent, REQUEST_SETTINGS)

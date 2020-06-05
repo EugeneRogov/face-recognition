@@ -7,7 +7,7 @@
     <string name="settings_button_text">choose camera</string>
 
 
-    <!-- settings_activity activity -->
+    <!-- choose_camera_activity activity -->
     <string name="camera0_radio_button">camera 0</string>
     <string name="camera1_radio_button">camera 1</string>
     <string name="camera2_radio_button">camera 2</string>

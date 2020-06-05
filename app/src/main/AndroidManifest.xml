@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name="SettingsActivity"
+            android:name="ChooseCameraActivity"
             android:screenOrientation="landscape">
         </activity>
 
