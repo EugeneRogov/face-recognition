@@ -91,7 +91,11 @@ class MainActivity : AppCompatActivity() {
         var grantedCount = 0
         for (i in permissionsStr.indices) {
             val perstr = permissionsStr[i]
-            if (ContextCompat.checkSelfPermission(this, perstr) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    perstr
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 val tv = findViewById<View>(permissionsTvId[i]) as TextView
                 tv.text = " granted "
                 tv.setTextColor(Color.GREEN)
@@ -123,7 +127,11 @@ class MainActivity : AppCompatActivity() {
         Thread(LoadThread(this, service)).start()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         var askAgain = false
         for (i in permissions.indices) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -229,7 +237,7 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<View>(R.id.settings_button) as Button
         settingsButton.setOnClickListener {
             val toSettingsIntent = Intent(applicationContext, ChooseCameraActivity::class.java)
-            toSettingsIntent.putExtra("selected_camera_id", cameraId)
+            toSettingsIntent.putExtra(ChooseCameraActivity.EXTRA_SELECTED_CAMERA_ID, cameraId)
             toSettingsIntent.putExtra("selected_resolution", stringResolution)
             startActivityForResult(toSettingsIntent, REQUEST_SETTINGS)
         }

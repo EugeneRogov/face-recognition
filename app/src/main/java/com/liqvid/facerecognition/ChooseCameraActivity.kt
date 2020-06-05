@@ -6,19 +6,17 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.choose_camera_activity.*
 import java.util.*
 
 class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) {
     companion object {
         val TAG: String = ChooseCameraActivity::class.java.simpleName
+        const val EXTRA_SELECTED_CAMERA_ID = "selected_camera_id"
     }
 
     private val rbList = ArrayList<RadioButton?>()
-    private var radioGroup: RadioGroup? = null
-    private var rb0: RadioButton? = null
-    private var rb1: RadioButton? = null
-    private var rb2: RadioButton? = null
-    private var spinner: Spinner? = null
+
     private val camsResolutions = ArrayList<ArrayList<String>>()
     private var selectedCameraId = 0
     private var selectedResolution = "640x480"
@@ -26,22 +24,18 @@ class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //get previous or default values
-        val getValuesIntent = intent
-        selectedCameraId = getValuesIntent.getIntExtra("selected_camera_id", selectedCameraId)
+        // get previous or default values
+        selectedCameraId = intent.getIntExtra(EXTRA_SELECTED_CAMERA_ID, selectedCameraId)
 
-        //radio buttons init
-        radioGroup = findViewById<View>(R.id.cameras_radio_group) as RadioGroup
-        rb0 = findViewById<View>(R.id.camera0_radio_button) as RadioButton
-        rb1 = findViewById<View>(R.id.camera1_radio_button) as RadioButton
-        rb2 = findViewById<View>(R.id.camera2_radio_button) as RadioButton
-        rbList.add(rb0)
-        rbList.add(rb1)
-        rbList.add(rb2)
+        rbList.add(camera0_radio_button)
+        rbList.add(camera1_radio_button)
+        rbList.add(camera2_radio_button)
         val availableCameras = TheCamera.getAvailableCameras()
 
         if (availableCameras.size == 0) {
+
             Log.e(TAG, "No available cameras")
+
             val toErrorIntent = Intent(this, ErrorActivity::class.java)
             toErrorIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             toErrorIntent.putExtra("error_activity message", "No available cameras")
@@ -75,23 +69,25 @@ class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) 
             }
         }
 
-        if (!isSelectedAvailable) {
+        if (!isSelectedAvailable)
             selectedCameraId = availableCameras[0].id
-        }
 
-        val rb = radioGroup!!.getChildAt(selectedCameraId) as RadioButton
+        val rb = rgCameras?.getChildAt(selectedCameraId) as RadioButton
         rb.isChecked = true
-        spinner = findViewById<View>(R.id.resolution_spinner) as Spinner
-        selectedResolution = getValuesIntent.getStringExtra("selected_resolution")
-        setSpinnerResolutions(selectedResolution)
-        spinner!!.setSelection(camsResolutions[selectedCameraId].indexOf(selectedResolution))
 
-        //ok - button
-        val okButton = findViewById<View>(R.id.settings_ok_button) as Button
-        okButton.setOnClickListener {
+        selectedResolution = intent.getStringExtra("selected_resolution")
+        setSpinnerResolutions(selectedResolution)
+        spinnerResolution?.setSelection(
+            camsResolutions[selectedCameraId].indexOf(
+                selectedResolution
+            )
+        )
+
+        // set listeners
+        btnOk.setOnClickListener {
             val setValuesIntent = Intent()
             setValuesIntent.putExtra("cam_id", selectedCameraId)
-            setValuesIntent.putExtra("selected_resolution", spinner!!.selectedItem.toString())
+            setValuesIntent.putExtra("selected_resolution", spinnerResolution?.selectedItem.toString())
             setResult(RESULT_OK, setValuesIntent)
             finish()
         }
@@ -121,10 +117,10 @@ class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) 
             camsResolutions[selectedCameraId].toTypedArray()
         )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner!!.adapter = spinnerAdapter
+        spinnerResolution?.adapter = spinnerAdapter
         var spinnerIndex = camsResolutions[selectedCameraId].indexOf(defaultResolution)
         spinnerIndex = if (spinnerIndex == -1) 0 else spinnerIndex
-        spinner!!.setSelection(spinnerIndex)
+        spinnerResolution?.setSelection(spinnerIndex)
     }
 
 }

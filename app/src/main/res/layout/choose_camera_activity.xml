@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <RadioGroup
-        android:id="@+id/cameras_radio_group"
+        android:id="@+id/rgCameras"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -40,14 +40,14 @@
     </RadioGroup>
 
     <Spinner
-        android:id="@+id/resolution_spinner"
+        android:id="@+id/spinnerResolution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/cameras_radio_group"
+        android:layout_below="@+id/rgCameras"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/settings_ok_button"
+        android:id="@+id/btnOk"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
