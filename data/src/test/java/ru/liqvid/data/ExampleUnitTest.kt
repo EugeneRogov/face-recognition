@@ -1,4 +1,4 @@
-package com.liqvid.domain
+package ru.liqvid.data
 
 import org.junit.Test
 
