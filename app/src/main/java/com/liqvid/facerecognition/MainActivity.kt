@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun starting() {
         setContentView(R.layout.splash)
+
         val service = FacerecService.createService(
             applicationInfo.nativeLibraryDir + "/libfacerec.so",
             "/sdcard/face_recognition/conf/facerec",
@@ -127,11 +128,7 @@ class MainActivity : AppCompatActivity() {
         Thread(LoadThread(this, service)).start()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         var askAgain = false
         for (i in permissions.indices) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
