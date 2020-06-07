@@ -11,9 +11,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.liqvid.facerecognition.Demo
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
@@ -76,8 +80,18 @@ class MainActivity : AppCompatActivity() {
         R.id.read_phone_perm_status
     )
 
+    private lateinit var model: MainActivityViewModel
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val model: MainActivityViewModel by viewModels()
+        model.downloadFaceNdkStatus().observe(this, Observer { data ->
+            Toast.makeText(this, data, Toast.LENGTH_SHORT).show()
+        })
+        model.doDownloadFaceNdk()
+
 
         // if directory with online licence exists then use it otherwise use default offline licence
         val buf = "/sdcard/face_recognition/online_license"
@@ -136,7 +150,11 @@ class MainActivity : AppCompatActivity() {
         ).start()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         var askAgain = false
         for (i in permissions.indices) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -239,7 +257,8 @@ class MainActivity : AppCompatActivity() {
             val toOptionsIntent = Intent(applicationContext, OptionsActivity::class.java)
             toOptionsIntent.putExtra("flags", flags)
             toOptionsIntent.putExtra("faceCutTypeId", faceCutTypeId)
-            startActivityForResult(toOptionsIntent,
+            startActivityForResult(
+                toOptionsIntent,
                 REQUEST_OPTIONS
             )
         }
@@ -249,7 +268,8 @@ class MainActivity : AppCompatActivity() {
             val toSettingsIntent = Intent(applicationContext, ChooseCameraActivity::class.java)
             toSettingsIntent.putExtra(ChooseCameraActivity.EXTRA_SELECTED_CAMERA_ID, cameraId)
             toSettingsIntent.putExtra("selected_resolution", stringResolution)
-            startActivityForResult(toSettingsIntent,
+            startActivityForResult(
+                toSettingsIntent,
                 REQUEST_SETTINGS
             )
         }
