@@ -2,6 +2,7 @@ package com.liqvid.facerecognition.ui
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -17,15 +18,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.liqvid.facerecognition.Constant
 import com.liqvid.facerecognition.Demo
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
+import com.tonyodev.fetch2.*
+import com.tonyodev.fetch2core.DownloadBlock
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
 import java.io.File
 import java.util.*
+import com.tonyodev.fetch2core.Func
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -83,6 +86,93 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var model: MainActivityViewModel
 
+    private var fetch: Fetch? = null
+
+
+
+
+//    private fun fetchFaceNdk() {
+//        val fetchConfiguration =
+//            FetchConfiguration.Builder(applicationContext)
+//                .setDownloadConcurrentLimit(3)
+//                .build()
+//        fetch = Fetch.getInstance(fetchConfiguration)
+//        val url = Constant.DOWNLOAD_URL
+//        val file = "/sdcard/face_recognition/test.rar"
+//        val request = Request(url, file)
+//        request.priority = Priority.HIGH
+//        request.networkType = NetworkType.ALL
+////        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
+//        fetch!!.enqueue(
+//            request,
+//            Func { updatedRequest: Request? -> },
+//            Func { error: Error? -> }
+//        )
+//
+//        Log.i(MainActivity.TAG, "fetch")
+//
+//        fetch!!.addListener(object : FetchListener {
+//            override fun onAdded(download: Download) {
+//                Log.i(MainActivity.TAG, "onAdded")
+//            }
+//
+//            override fun onCancelled(download: Download) {
+//                Log.i(MainActivity.TAG, "onCancelled")
+//            }
+//
+//            override fun onCompleted(download: Download) {
+//                Log.i(MainActivity.TAG, "onCompleted")
+//            }
+//
+//            override fun onDeleted(download: Download) {
+//                Log.i(MainActivity.TAG, "onDeleted")
+//            }
+//
+//            override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
+//                Log.i(MainActivity.TAG, "onDownloadBlockUpdated")
+//            }
+//
+//            override fun onError(download: Download, error: Error, throwable: Throwable?) {
+//                Log.i(MainActivity.TAG, "onError")
+//            }
+//
+//            override fun onPaused(download: Download) {
+//                Log.i(MainActivity.TAG, "onPaused")
+//            }
+//
+//            override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
+//                Log.i(MainActivity.TAG, "onProgress")
+//            }
+//
+//            override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
+//                Log.i(MainActivity.TAG, "onQueued")
+//            }
+//
+//            override fun onRemoved(download: Download) {
+//                Log.i(MainActivity.TAG, "onRemoved")
+//            }
+//
+//            override fun onResumed(download: Download) {
+//                Log.i(MainActivity.TAG, "onResumed")
+//            }
+//
+//            override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
+//                Log.i(MainActivity.TAG, "onStarted")
+//            }
+//
+//            override fun onWaitingNetwork(download: Download) {
+//                Log.i(MainActivity.TAG, "onWaitingNetwork")
+//            }
+//        })
+//
+//    }
+
+
+
+
+
+
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -91,7 +181,8 @@ class MainActivity : AppCompatActivity() {
         model.downloadFaceNdkStatus().observe(this, Observer { data ->
             Toast.makeText(this, data, Toast.LENGTH_SHORT).show()
         })
-        model.doDownloadFaceNdk()
+        model.doDownloadFaceNdkIfNeed(applicationContext)
+//        fetchFaceNdk()
 
 
         // if directory with online licence exists then use it otherwise use default offline licence
