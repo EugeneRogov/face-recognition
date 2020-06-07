@@ -1,4 +1,4 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.liqvid.facerecognition.R
+import com.liqvid.facerecognition.TheCamera
 import kotlinx.android.synthetic.main.choose_camera_activity.*
 import java.util.*
 
@@ -30,7 +32,8 @@ class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) 
         rbList.add(camera0_radio_button)
         rbList.add(camera1_radio_button)
         rbList.add(camera2_radio_button)
-        val availableCameras = TheCamera.getAvailableCameras()
+        val availableCameras =
+            TheCamera.getAvailableCameras()
 
         if (availableCameras.size == 0) {
 

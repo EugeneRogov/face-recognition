@@ -1,4 +1,4 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.ui
 
 import android.Manifest
 import android.app.Activity
@@ -14,6 +14,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.liqvid.facerecognition.Demo
+import com.liqvid.facerecognition.R
+import com.liqvid.facerecognition.TheCamera
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
 import java.io.File
@@ -125,7 +128,12 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG, "license_state.ios_app_id        = " + licenseState.ios_app_id)
         Log.i(TAG, "license_state.hardware_reg      = " + licenseState.hardware_reg)
 
-        Thread(LoadThread(this, service)).start()
+        Thread(
+            LoadThread(
+                this,
+                service
+            )
+        ).start()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -208,7 +216,10 @@ class MainActivity : AppCompatActivity() {
                     ma.showForm()
                 }
             } catch (e: Exception) {
-                exceptionHappensDo(ma, e)
+                exceptionHappensDo(
+                    ma,
+                    e
+                )
                 return
             }
         }
@@ -228,7 +239,9 @@ class MainActivity : AppCompatActivity() {
             val toOptionsIntent = Intent(applicationContext, OptionsActivity::class.java)
             toOptionsIntent.putExtra("flags", flags)
             toOptionsIntent.putExtra("faceCutTypeId", faceCutTypeId)
-            startActivityForResult(toOptionsIntent, REQUEST_OPTIONS)
+            startActivityForResult(toOptionsIntent,
+                REQUEST_OPTIONS
+            )
         }
 
         val settingsButton = findViewById<View>(R.id.settings_button) as Button
@@ -236,7 +249,9 @@ class MainActivity : AppCompatActivity() {
             val toSettingsIntent = Intent(applicationContext, ChooseCameraActivity::class.java)
             toSettingsIntent.putExtra(ChooseCameraActivity.EXTRA_SELECTED_CAMERA_ID, cameraId)
             toSettingsIntent.putExtra("selected_resolution", stringResolution)
-            startActivityForResult(toSettingsIntent, REQUEST_SETTINGS)
+            startActivityForResult(toSettingsIntent,
+                REQUEST_SETTINGS
+            )
         }
 
         camera!!.open(demo, cameraId, imWidth, imHeight)

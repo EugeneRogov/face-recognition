@@ -1,4 +1,4 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
+import com.liqvid.facerecognition.R
 import kotlinx.android.synthetic.main.options_activity.*
 
 class OptionsActivity : AppCompatActivity(R.layout.options_activity) {

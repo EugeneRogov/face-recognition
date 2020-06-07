@@ -1,8 +1,9 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.liqvid.facerecognition.R
 
 class ErrorActivity : AppCompatActivity(R.layout.error_activity) {
 

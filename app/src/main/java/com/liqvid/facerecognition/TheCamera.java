@@ -12,6 +12,7 @@ import android.hardware.Camera.Size;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.liqvid.facerecognition.ui.ErrorActivity;
 import com.vdt.face_recognition.sdk.SDKException;
 import com.vdt.face_recognition.sdk.utils.Converter_YUV_NV_2_ARGB;
 
