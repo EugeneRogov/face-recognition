@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.liqvid.facerecognition.Constant
 import com.liqvid.facerecognition.Demo
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
@@ -108,11 +109,7 @@ class MainActivity : AppCompatActivity() {
         var grantedCount = 0
         for (i in permissionsStr.indices) {
             val perstr = permissionsStr[i]
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    perstr
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, perstr) == PackageManager.PERMISSION_GRANTED) {
                 val tv = findViewById<View>(permissionsTvId[i]) as TextView
                 tv.text = " granted "
                 tv.setTextColor(Color.GREEN)
@@ -132,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
         val service = FacerecService.createService(
             applicationInfo.nativeLibraryDir + "/libfacerec.so",
-            "/sdcard/face_recognition/conf/facerec",
+            Constant.PATH_FACE_REC_CONFIG,
             onlineLicenceDir
         )
         val licenseState = service.licenseState
