@@ -13,11 +13,6 @@ import com.tonyodev.fetch2core.Func
 
 class MainActivityViewModel : ViewModel() {
 
-
-
-
-
-
     private var downloadFaceNdkStatus = MutableLiveData<String>()
 
     private var fetch: Fetch? = null
