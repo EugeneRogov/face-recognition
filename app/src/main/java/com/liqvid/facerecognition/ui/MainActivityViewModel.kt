@@ -1,116 +1,47 @@
 package com.liqvid.facerecognition.ui
 
-import android.content.Context
-import android.util.Log
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.liqvid.facerecognition.Constant
 import com.liqvid.facerecognition.util.Util
-import com.tonyodev.fetch2.*
-import com.tonyodev.fetch2core.DownloadBlock
-import com.tonyodev.fetch2core.Func
+import com.tonyodev.fetch2.Fetch
+import ru.liqvid.data.di.Constant
+import ru.liqvid.data.repository.DownloadFaceNdkRepository
+import ru.liqvid.data.repository.OnResult
 
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+
+    private var downloadFaceNdkRepository: DownloadFaceNdkRepository = DownloadFaceNdkRepository()
 
     private var downloadFaceNdkStatus = MutableLiveData<String>()
 
     private var fetch: Fetch? = null
+
+    private var context = application.baseContext
 
     fun downloadFaceNdkStatus(): LiveData<String> {
         downloadFaceNdkStatus = MutableLiveData()
         return downloadFaceNdkStatus
     }
 
-    fun doDownloadFaceNdkIfNeed(context: Context) {
-        if (Util.isExistFaceNdk(Constant.PATH_FACE_REC_CONFIG)) {
-
-
-            fetchFaceNdk(context)
+    fun doDownloadFaceNdkIfNeed() {
+        if (Util.isExistFaceNdk("/sdcard/face_recognition")) {
 
             downloadFaceNdkStatus.value = "ok"
-        } else
-            downloadFaceNdkStatus.value = "not ok"
+        } else {
+            downloadFaceNdkStatus.value = "Ndk not exist"
+            downloadFaceNdkRepository.loadData(context, object : OnResult{
+                override fun success(v: String) {
+                    downloadFaceNdkStatus.value = "Face ndk downloaded"
+                }
+
+                override fun failure(v: String) {
+                    TODO("Not yet implemented")
+                }
+            })
+
+        }
     }
-
-    private fun fetchFaceNdk(context: Context) {
-        val fetchConfiguration =
-            FetchConfiguration.Builder(context)
-                .setDownloadConcurrentLimit(3)
-                .build()
-        fetch = Fetch.getInstance(fetchConfiguration)
-        val url = Constant.DOWNLOAD_URL
-        val file = "/sdcard/face_recognition/test.rar"
-        val request = Request(url, file)
-        request.priority = Priority.HIGH
-        request.networkType = NetworkType.ALL
-        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
-        fetch!!.enqueue(
-            request,
-            Func { updatedRequest: Request? -> },
-            Func { error: Error? -> }
-        )
-
-        Log.i(MainActivity.TAG, "fetch")
-
-        fetch!!.addListener(object : FetchListener {
-            override fun onAdded(download: Download) {
-                Log.i(MainActivity.TAG, "onAdded")
-            }
-
-            override fun onCancelled(download: Download) {
-                Log.i(MainActivity.TAG, "onCancelled")
-            }
-
-            override fun onCompleted(download: Download) {
-                Log.i(MainActivity.TAG, "onCompleted")
-                downloadFaceNdkStatus.value = "Face ndk downloaded"
-            }
-
-            override fun onDeleted(download: Download) {
-                Log.i(MainActivity.TAG, "onDeleted")
-            }
-
-            override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
-                Log.i(MainActivity.TAG, "onDownloadBlockUpdated")
-            }
-
-            override fun onError(download: Download, error: Error, throwable: Throwable?) {
-                Log.i(MainActivity.TAG, "onError")
-            }
-
-            override fun onPaused(download: Download) {
-                Log.i(MainActivity.TAG, "onPaused")
-            }
-
-            override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
-                Log.i(MainActivity.TAG, "onProgress")
-            }
-
-            override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-                Log.i(MainActivity.TAG, "onQueued")
-            }
-
-            override fun onRemoved(download: Download) {
-                Log.i(MainActivity.TAG, "onRemoved")
-            }
-
-            override fun onResumed(download: Download) {
-                Log.i(MainActivity.TAG, "onResumed")
-            }
-
-            override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
-                Log.i(MainActivity.TAG, "onStarted")
-            }
-
-            override fun onWaitingNetwork(download: Download) {
-                Log.i(MainActivity.TAG, "onWaitingNetwork")
-            }
-        })
-
-    }
-
-
-
 
 }

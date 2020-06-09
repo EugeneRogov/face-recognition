@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import com.liqvid.facerecognition.Constant
 import com.liqvid.facerecognition.Demo
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
@@ -29,6 +28,7 @@ import com.vdt.face_recognition.sdk.SDKException
 import java.io.File
 import java.util.*
 import com.tonyodev.fetch2core.Func
+import ru.liqvid.data.di.Constant
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -84,105 +84,14 @@ class MainActivity : AppCompatActivity() {
         R.id.read_phone_perm_status
     )
 
-    private lateinit var model: MainActivityViewModel
-
-    private var fetch: Fetch? = null
-
-
-
-
-//    private fun fetchFaceNdk() {
-//        val fetchConfiguration =
-//            FetchConfiguration.Builder(applicationContext)
-//                .setDownloadConcurrentLimit(3)
-//                .build()
-//        fetch = Fetch.getInstance(fetchConfiguration)
-//        val url = Constant.DOWNLOAD_URL
-//        val file = "/sdcard/face_recognition/test.rar"
-//        val request = Request(url, file)
-//        request.priority = Priority.HIGH
-//        request.networkType = NetworkType.ALL
-////        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
-//        fetch!!.enqueue(
-//            request,
-//            Func { updatedRequest: Request? -> },
-//            Func { error: Error? -> }
-//        )
-//
-//        Log.i(MainActivity.TAG, "fetch")
-//
-//        fetch!!.addListener(object : FetchListener {
-//            override fun onAdded(download: Download) {
-//                Log.i(MainActivity.TAG, "onAdded")
-//            }
-//
-//            override fun onCancelled(download: Download) {
-//                Log.i(MainActivity.TAG, "onCancelled")
-//            }
-//
-//            override fun onCompleted(download: Download) {
-//                Log.i(MainActivity.TAG, "onCompleted")
-//            }
-//
-//            override fun onDeleted(download: Download) {
-//                Log.i(MainActivity.TAG, "onDeleted")
-//            }
-//
-//            override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
-//                Log.i(MainActivity.TAG, "onDownloadBlockUpdated")
-//            }
-//
-//            override fun onError(download: Download, error: Error, throwable: Throwable?) {
-//                Log.i(MainActivity.TAG, "onError")
-//            }
-//
-//            override fun onPaused(download: Download) {
-//                Log.i(MainActivity.TAG, "onPaused")
-//            }
-//
-//            override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
-//                Log.i(MainActivity.TAG, "onProgress")
-//            }
-//
-//            override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-//                Log.i(MainActivity.TAG, "onQueued")
-//            }
-//
-//            override fun onRemoved(download: Download) {
-//                Log.i(MainActivity.TAG, "onRemoved")
-//            }
-//
-//            override fun onResumed(download: Download) {
-//                Log.i(MainActivity.TAG, "onResumed")
-//            }
-//
-//            override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
-//                Log.i(MainActivity.TAG, "onStarted")
-//            }
-//
-//            override fun onWaitingNetwork(download: Download) {
-//                Log.i(MainActivity.TAG, "onWaitingNetwork")
-//            }
-//        })
-//
-//    }
-
-
-
-
-
-
-
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         val model: MainActivityViewModel by viewModels()
         model.downloadFaceNdkStatus().observe(this, Observer { data ->
             Toast.makeText(this, data, Toast.LENGTH_SHORT).show()
         })
-        model.doDownloadFaceNdkIfNeed(applicationContext)
-//        fetchFaceNdk()
+        model.doDownloadFaceNdkIfNeed()
 
 
         // if directory with online licence exists then use it otherwise use default offline licence
@@ -200,7 +109,11 @@ class MainActivity : AppCompatActivity() {
         var grantedCount = 0
         for (i in permissionsStr.indices) {
             val perstr = permissionsStr[i]
-            if (ContextCompat.checkSelfPermission(this, perstr) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    perstr
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 val tv = findViewById<View>(permissionsTvId[i]) as TextView
                 tv.text = " granted "
                 tv.setTextColor(Color.GREEN)
@@ -220,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
         val service = FacerecService.createService(
             applicationInfo.nativeLibraryDir + "/libfacerec.so",
-            Constant.PATH_FACE_REC_CONFIG,
+            "/sdcard/face_recognition/conf/facerec",
             onlineLicenceDir
         )
         val licenseState = service.licenseState

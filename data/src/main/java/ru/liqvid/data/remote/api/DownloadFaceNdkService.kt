@@ -6,88 +6,90 @@ import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.DownloadBlock
 
 import com.tonyodev.fetch2core.Func
+import io.reactivex.rxjava3.core.Observable
+import ru.liqvid.data.di.Constant
 
 class DownloadFaceNdkService {
-    fun fetch3DiViFaceSdk(context: Context) {
+    fun fetch3DiViFaceSdk(context: Context): Observable<Download> {
+        return Observable.create { subscriber ->
+            val fetchConfiguration =
+                FetchConfiguration.Builder(context)
+                    .setDownloadConcurrentLimit(3)
+                    .build()
 
-        val fetchConfiguration =
-            FetchConfiguration.Builder(context)
-                .setDownloadConcurrentLimit(3)
-                .build()
+            val fetch = Fetch.getInstance(fetchConfiguration)
+            val url = Constant.DOWNLOAD_URL
+            val file = Constant.SD_CARD_FACE_RECOGNITION
 
-        val fetch = Fetch.getInstance(fetchConfiguration)
-//        val url = Constant.DOWNLOAD_URL
-//        val file = Constant.SD_CARD_FACE_RECOGNITION
+            val request = Request(url, file)
+            request.priority = Priority.HIGH
+            request.networkType = NetworkType.ALL
+//            request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
+            fetch.enqueue(
+                request,
+                Func { updatedRequest: Request? -> },
+                Func { error: Error? -> }
+            )
 
-        val url = "Constant.DOWNLOAD_URL"
-        val file = "Constant.SD_CARD_FACE_RECOGNITION"
+            Log.i("MainActivity.TAG", "fetch")
 
-        val request = Request(url, file)
-        request.priority = Priority.HIGH
-        request.networkType = NetworkType.ALL
-        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
-        fetch.enqueue(
-            request,
-            Func { updatedRequest: Request? -> },
-            Func { error: Error? -> }
-        )
+            fetch.addListener(object : FetchListener {
+                override fun onAdded(download: Download) {
 
-        Log.i("MainActivity.TAG", "fetch")
+                }
 
-        fetch.addListener(object : FetchListener {
-            override fun onAdded(download: Download) {
+                override fun onCancelled(download: Download) {
 
-            }
+                }
 
-            override fun onCancelled(download: Download) {
+                override fun onCompleted(download: Download) {
+                    subscriber.onComplete()
+                    Log.i("DownloadFaceNdkService", "onCompleted")
+                }
 
-            }
+                override fun onDeleted(download: Download) {
+                    Log.i("DownloadFaceNdkService", "onDeleted")
+                }
 
-            override fun onCompleted(download: Download) {
-                Log.i("DownloadFaceNdkService", "onCompleted")
+                override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
+                    Log.i("DownloadFaceNdkService", "onDownloadBlockUpdated")
+                }
 
-            }
+                override fun onError(download: Download, error: Error, throwable: Throwable?) {
+                    Log.i("DownloadFaceNdkService", "onError")
+                }
 
-            override fun onDeleted(download: Download) {
-                Log.i("DownloadFaceNdkService", "onDeleted")
-            }
+                override fun onPaused(download: Download) {
+                    Log.i("DownloadFaceNdkService", "onPaused")
+                }
 
-            override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
-                Log.i("DownloadFaceNdkService", "onDownloadBlockUpdated")
-            }
+                override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
+                    Log.i("DownloadFaceNdkService", "onProgress")
+                }
 
-            override fun onError(download: Download, error: Error, throwable: Throwable?) {
-                Log.i("DownloadFaceNdkService", "onError")
-            }
+                override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
+                    subscriber.onNext(download)
+                    Log.i("DownloadFaceNdkService", "onQueued")
+                }
 
-            override fun onPaused(download: Download) {
-                Log.i("DownloadFaceNdkService", "onPaused")
-            }
+                override fun onRemoved(download: Download) {
+                    Log.i("DownloadFaceNdkService", "onRemoved")
+                }
 
-            override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
-                Log.i("DownloadFaceNdkService", "onProgress")
-            }
+                override fun onResumed(download: Download) {
+                    Log.i("DownloadFaceNdkService", "onResumed")
+                }
 
-            override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-                Log.i("DownloadFaceNdkService", "onQueued")
-            }
+                override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
+                    Log.i("DownloadFaceNdkService", "onStarted")
+                }
 
-            override fun onRemoved(download: Download) {
-                Log.i("DownloadFaceNdkService", "onRemoved")
-            }
+                override fun onWaitingNetwork(download: Download) {
+                    Log.i("DownloadFaceNdkService", "onWaitingNetwork")
+                }
+            })
 
-            override fun onResumed(download: Download) {
-                Log.i("DownloadFaceNdkService", "onResumed")
-            }
-
-            override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
-                Log.i("DownloadFaceNdkService", "onStarted")
-            }
-
-            override fun onWaitingNetwork(download: Download) {
-                Log.i("DownloadFaceNdkService", "onWaitingNetwork")
-            }
-        })
+        }
 
     }
 }
