@@ -27,7 +27,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         if (!Util.isExistFile("/sdcard/face_recognition/test.rar")) {
             downloadFaceNdkStatus.value = "Face ndk downloading..."
 
-            downloadFaceNdkRepository.loadData(context, object : OnResult {
+            downloadFaceNdkRepository.loadAndPrepareFaceNdk(context, object : OnResult {
                 override fun success(v: String) {
                     downloadFaceNdkStatus.value = "Face ndk downloaded $v"
 

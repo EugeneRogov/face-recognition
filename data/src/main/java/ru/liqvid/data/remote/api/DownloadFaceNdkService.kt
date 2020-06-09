@@ -35,8 +35,6 @@ class DownloadFaceNdkService {
                 Func { error: Error? -> }
             )
 
-            Log.i("MainActivity.TAG", "fetch")
-
             fetch.addListener(object : FetchListener {
                 override fun onAdded(download: Download) {
 
