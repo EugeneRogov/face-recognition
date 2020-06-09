@@ -28,18 +28,23 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     fun doDownloadFaceNdkIfNeed() {
         if (Util.isExistFaceNdk("/sdcard/face_recognition")) {
 
-            downloadFaceNdkStatus.value = "ok"
-        } else {
+
+
+
             downloadFaceNdkStatus.value = "Ndk not exist"
+
             downloadFaceNdkRepository.loadData(context, object : OnResult{
                 override fun success(v: String) {
-                    downloadFaceNdkStatus.value = "Face ndk downloaded"
+                    downloadFaceNdkStatus.value = "Face ndk downloaded $v"
                 }
 
                 override fun failure(v: String) {
-                    TODO("Not yet implemented")
+                    downloadFaceNdkStatus.value = v
                 }
             })
+
+        } else {
+
 
         }
     }

@@ -10,6 +10,10 @@ import io.reactivex.rxjava3.core.Observable
 import ru.liqvid.data.di.Constant
 
 class DownloadFaceNdkService {
+    companion object {
+        val TAG: String = DownloadFaceNdkService::class.java.simpleName
+    }
+
     fun fetch3DiViFaceSdk(context: Context): Observable<Download> {
         return Observable.create { subscriber ->
             val fetchConfiguration =
@@ -43,49 +47,49 @@ class DownloadFaceNdkService {
                 }
 
                 override fun onCompleted(download: Download) {
-                    subscriber.onComplete()
-                    Log.i("DownloadFaceNdkService", "onCompleted")
+                    subscriber.onNext(download)
+                    Log.i(TAG, "onCompleted")
                 }
 
                 override fun onDeleted(download: Download) {
-                    Log.i("DownloadFaceNdkService", "onDeleted")
+                    Log.i(TAG, "onDeleted")
                 }
 
                 override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
-                    Log.i("DownloadFaceNdkService", "onDownloadBlockUpdated")
+                    Log.i(TAG, "onDownloadBlockUpdated")
                 }
 
                 override fun onError(download: Download, error: Error, throwable: Throwable?) {
-                    Log.i("DownloadFaceNdkService", "onError")
+                    Log.i(TAG, "onError")
                 }
 
                 override fun onPaused(download: Download) {
-                    Log.i("DownloadFaceNdkService", "onPaused")
+                    Log.i(TAG, "onPaused")
                 }
 
                 override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
-                    Log.i("DownloadFaceNdkService", "onProgress")
+                    subscriber.onNext(download)
                 }
 
                 override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-                    subscriber.onNext(download)
-                    Log.i("DownloadFaceNdkService", "onQueued")
+
+                    Log.i(TAG, "onQueued")
                 }
 
                 override fun onRemoved(download: Download) {
-                    Log.i("DownloadFaceNdkService", "onRemoved")
+                    Log.i(TAG, "onRemoved")
                 }
 
                 override fun onResumed(download: Download) {
-                    Log.i("DownloadFaceNdkService", "onResumed")
+                    Log.i(TAG, "onResumed")
                 }
 
                 override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
-                    Log.i("DownloadFaceNdkService", "onStarted")
+                    Log.i(TAG, "onStarted")
                 }
 
                 override fun onWaitingNetwork(download: Download) {
-                    Log.i("DownloadFaceNdkService", "onWaitingNetwork")
+                    Log.i(TAG, "onWaitingNetwork")
                 }
             })
 
