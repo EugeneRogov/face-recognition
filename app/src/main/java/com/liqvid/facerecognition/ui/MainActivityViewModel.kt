@@ -6,8 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.liqvid.facerecognition.util.Util
-import com.tonyodev.fetch2.Fetch
-import ru.liqvid.data.di.Constant
 import ru.liqvid.data.repository.DownloadFaceNdkRepository
 import ru.liqvid.data.repository.OnResult
 
@@ -17,11 +15,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private var downloadFaceNdkRepository: DownloadFaceNdkRepository = DownloadFaceNdkRepository()
-
     private var downloadFaceNdkStatus = MutableLiveData<String>()
-
-    private var fetch: Fetch? = null
-
     private var context = application.baseContext
 
     fun downloadFaceNdkStatus(): LiveData<String> {
@@ -30,12 +24,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun doDownloadFaceNdkIfNeed() {
-        if (Util.isExistFaceNdk("/sdcard/face_recognition")) {
+        if (!Util.isExistFile("/sdcard/face_recognition/test.rar")) {
+            downloadFaceNdkStatus.value = "Face ndk downloading..."
 
-
-            downloadFaceNdkStatus.value = "Ndk not exist"
-
-            downloadFaceNdkRepository.loadData(context, object : OnResult{
+            downloadFaceNdkRepository.loadData(context, object : OnResult {
                 override fun success(v: String) {
                     downloadFaceNdkStatus.value = "Face ndk downloaded $v"
 
@@ -50,8 +42,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             })
 
         } else {
-
-
+            downloadFaceNdkStatus.value = "Face ndk installed"
         }
     }
 

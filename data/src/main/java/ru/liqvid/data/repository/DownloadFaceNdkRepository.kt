@@ -25,7 +25,7 @@ class DownloadFaceNdkRepository () {
         downloadFaceNdkService.fetch3DiViFaceSdk(context).subscribe(
             {
                 if (it.status == Status.COMPLETED) {
-                    l.success(" scscscscsc")
+                    l.success("")
                     Log.i(TAG, "download completed " + it.progress)
                 } else if (it.status == Status.DOWNLOADING) {
                     // TODO: тут можно кидать логи на сервер с прогрессом загрузки
