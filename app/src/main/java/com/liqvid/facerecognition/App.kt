@@ -2,7 +2,6 @@ package com.liqvid.facerecognition
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
-import ru.liqvid.data.di.DaggerNetworkComponent
 import ru.liqvid.data.di.NetworkComponent
 
 class App : MultiDexApplication() {
@@ -20,12 +19,12 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        networkComponent = buildNetworkComponent()
+//        networkComponent = buildNetworkComponent()
     }
 
-    private fun buildNetworkComponent(): NetworkComponent? {
-        return DaggerNetworkComponent.builder()
-            .build()
-    }
+//    private fun buildNetworkComponent(): NetworkComponent? {
+//        return DaggerNetworkComponent.builder()
+//            .build()
+//    }
 
 }

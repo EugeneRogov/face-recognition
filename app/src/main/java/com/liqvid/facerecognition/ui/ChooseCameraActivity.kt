@@ -32,8 +32,7 @@ class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) 
         rbList.add(camera0_radio_button)
         rbList.add(camera1_radio_button)
         rbList.add(camera2_radio_button)
-        val availableCameras =
-            TheCamera.getAvailableCameras()
+        val availableCameras = TheCamera.availableCameras
 
         if (availableCameras.size == 0) {
 
@@ -61,7 +60,7 @@ class ChooseCameraActivity : AppCompatActivity(R.layout.choose_camera_activity) 
 
             if (camId < rbList.size) {
                 rbList[camId]!!.visibility = View.VISIBLE
-                for (size in resolutions) {
+                for (size in resolutions!!) {
                     val resolutionString = size.width.toString() + "x" + size.height.toString()
                     camsResolutions[camId].add(resolutionString)
                     Log.d(TAG, "    $resolutionString")
