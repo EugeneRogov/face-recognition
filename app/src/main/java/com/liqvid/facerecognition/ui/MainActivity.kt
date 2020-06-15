@@ -2,7 +2,6 @@ package com.liqvid.facerecognition.ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -21,14 +20,10 @@ import androidx.lifecycle.Observer
 import com.liqvid.facerecognition.Demo
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
-import com.tonyodev.fetch2.*
-import com.tonyodev.fetch2core.DownloadBlock
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
 import java.io.File
 import java.util.*
-import com.tonyodev.fetch2core.Func
-import ru.liqvid.data.di.Constant
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -84,14 +79,18 @@ class MainActivity : AppCompatActivity() {
         R.id.read_phone_perm_status
     )
 
+    private val model: MainActivityViewModel by viewModels()
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val model: MainActivityViewModel by viewModels()
+        // observe data
         model.downloadFaceNdkStatus().observe(this, Observer { data ->
-            Toast.makeText(this, data, Toast.LENGTH_SHORT).show()
+            if (data)
+                starting()
+            else
+                Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show()
         })
-        model.doDownloadFaceNdkIfNeed()
 
 
         // if directory with online licence exists then use it otherwise use default offline licence
@@ -124,7 +123,8 @@ class MainActivity : AppCompatActivity() {
         if (grantedCount < permissionsStr.size) {
             ActivityCompat.requestPermissions(this, permissionsStr, 0)
         } else {
-            starting()
+            model.doDownloadFaceNdkIfNeed()
+
         }
     }
 
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }, 2000)
         } else {
-            starting()
+            model.doDownloadFaceNdkIfNeed()
         }
     }
 

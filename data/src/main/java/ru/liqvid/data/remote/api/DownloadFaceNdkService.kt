@@ -7,14 +7,22 @@ import com.tonyodev.fetch2core.DownloadBlock
 
 import com.tonyodev.fetch2core.Func
 import io.reactivex.rxjava3.core.Observable
-import ru.liqvid.data.di.Constant
+import ru.liqvid.util.Constant
 
 class DownloadFaceNdkService {
     companion object {
         val TAG: String = DownloadFaceNdkService::class.java.simpleName
     }
 
-    fun fetch3DiViFaceSdk(context: Context): Observable<Download> {
+    /**
+     * Download zip file specified by the downloadUrl
+     *
+     * Sends download progress
+     *
+     * @param context
+     * @param downloadUrl
+     */
+    fun fetch3DiViFaceSdk(context: Context, downloadUrl: String): Observable<Download> {
         return Observable.create { subscriber ->
             val fetchConfiguration =
                 FetchConfiguration.Builder(context)
@@ -22,13 +30,10 @@ class DownloadFaceNdkService {
                     .build()
 
             val fetch = Fetch.getInstance(fetchConfiguration)
-            val url = Constant.DOWNLOAD_URL
-            val file = Constant.SD_CARD_FACE_RECOGNITION
 
-            val request = Request(url, file)
+            val request = Request(downloadUrl, Constant.FR_ZIP_FILE_PATH)
             request.priority = Priority.HIGH
             request.networkType = NetworkType.ALL
-//            request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
             fetch.enqueue(
                 request,
                 Func { updatedRequest: Request? -> },
@@ -54,7 +59,7 @@ class DownloadFaceNdkService {
                 }
 
                 override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
-                    Log.i(TAG, "onDownloadBlockUpdated")
+                    Log.i(TAG, "onDownloadBlockUpdated " + download.progress)
                 }
 
                 override fun onError(download: Download, error: Error, throwable: Throwable?) {
