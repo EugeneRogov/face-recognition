@@ -52,7 +52,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
     private lateinit var camera: Camera
     private var activity: Activity? = null
     private var image: ImageView? = null
-    private var painter: Demo? = null
+    private var painter: FaceRecognition? = null
     private var camId = 0
     private var surfaceTexture: SurfaceTexture? = null
 
@@ -70,7 +70,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
     }
 
     @Synchronized
-    fun open(painter: Demo?, cam_id: Int, width: Int, height: Int) {
+    fun open(painter: FaceRecognition?, cam_id: Int, width: Int, height: Int) {
         if (openFlag) return
         this.painter = painter
         openFlag = true
@@ -125,7 +125,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
     }
 
     override fun onPreviewFrame(arg0: ByteArray, arg1: Camera) {
-        image = activity!!.findViewById<View>(R.id.imageView) as ImageView
+        image = activity?.findViewById<View>(R.id.imageView) as ImageView
         val parameters = arg1.parameters
         val size = parameters.previewSize
         val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, arg0, size.width, size.height)

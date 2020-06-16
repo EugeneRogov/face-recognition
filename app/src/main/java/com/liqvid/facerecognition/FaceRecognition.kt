@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,10 +20,11 @@ import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Demo(private val activity: Activity, service: FacerecService) {
+class FaceRecognition(private val activity: Activity, service: FacerecService) {
     companion object {
-        val TAG: String = Demo::class.java.simpleName
+        val TAG: String = FaceRecognition::class.java.simpleName
     }
+
     private var textView: TextView? = null
     private var service: FacerecService? = null
     private var capturer: Capturer? = null
@@ -41,13 +43,24 @@ class Demo(private val activity: Activity, service: FacerecService) {
     private var flagEmotions = false
     private val id2le = HashMap<Int, LivenessEstimator>()
     private var faceCutType: FaceCutType? = null
+
+    init {
+        this.service = service
+        val captureConf = service.Config("fda_tracker_capturer.xml")
+        captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
+        capturer = service.createCapturer(captureConf)
+        qualityEstimator = service.createQualityEstimator("quality_estimator.xml")
+        ageGenderEstimator = service.createAgeGenderEstimator("age_gender_estimator.xml")
+        emotionsEstimator = service.createEmotionsEstimator("emotions_estimator.xml")
+        faceQualityEstimator = service.createFaceQualityEstimator("face_quality_estimator.xml")
+    }
+
     fun updateCapture() {
         // force free resources otherwise licence error may occur when create sdk object in next time
         if (capturer != null) {
             capturer!!.dispose()
         }
-        val captureConf =
-            service!!.Config("fda_tracker_capturer.xml")
+        val captureConf = service!!.Config("fda_tracker_capturer.xml")
         captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
         capturer = service?.createCapturer(captureConf)
     }
@@ -56,19 +69,9 @@ class Demo(private val activity: Activity, service: FacerecService) {
         textView = activity.findViewById<View>(R.id.textView) as TextView
     }
 
-    private fun setWeight(id: Int, weight: Float) {
-        val view = activity.findViewById<View>(id)
-        val p = view.layoutParams as LinearLayout.LayoutParams
-        p.weight = weight
-        view.layoutParams = p
-    }
 
-    fun processingImage(
-        canvas: Canvas,
-        data: ByteArray?,
-        width: Int,
-        height: Int
-    ) {
+
+    fun processingImage(canvas: Canvas, data: ByteArray?, width: Int, height: Int) {
         val paint = Paint()
         paint.color = -0x10000
         paint.strokeWidth = 3f
@@ -81,7 +84,7 @@ class Demo(private val activity: Activity, service: FacerecService) {
         // output info for one person
         val sample = samples[0]
 
-        //face rectangle
+        // face rectangle
         if (flagRectangle) {
             val rect = sample.rectangle
             canvas.drawRect(
@@ -138,6 +141,9 @@ class Demo(private val activity: Activity, service: FacerecService) {
         if (flagAgeAndGender) {
             val ageGender = ageGenderEstimator!!.estimateAgeGender(sample)
             text += "Age: " + (ageGender.age_years + 0.5).toInt() + " years - "
+
+            Log.i(TAG, "Age: " + (ageGender.age_years + 0.5).toInt() + " years - ")
+
             text += when (ageGender.age) {
                 Age.AGE_KID -> "kid\n"
                 Age.AGE_YOUNG -> "young\n"
@@ -315,24 +321,22 @@ class Demo(private val activity: Activity, service: FacerecService) {
         get() = if (faceCutType != null) faceCutType!!.ordinal else 0
 
     fun dispose() {
-        service!!.dispose()
-        capturer!!.dispose()
-        qualityEstimator!!.dispose()
-        ageGenderEstimator!!.dispose()
-        emotionsEstimator!!.dispose()
-        faceQualityEstimator!!.dispose()
+        service?.dispose()
+        capturer?.dispose()
+        qualityEstimator?.dispose()
+        ageGenderEstimator?.dispose()
+        emotionsEstimator?.dispose()
+        faceQualityEstimator?.dispose()
+    }
+
+    private fun setWeight(id: Int, weight: Float) {
+        val view = activity.findViewById<View>(id)
+        val p = view.layoutParams as LinearLayout.LayoutParams
+        p.weight = weight
+        view.layoutParams = p
     }
 
 
 
-    init {
-        this.service = service
-        val captureConf = service.Config("fda_tracker_capturer.xml")
-        captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
-        capturer = service.createCapturer(captureConf)
-        qualityEstimator = service.createQualityEstimator("quality_estimator.xml")
-        ageGenderEstimator = service.createAgeGenderEstimator("age_gender_estimator.xml")
-        emotionsEstimator = service.createEmotionsEstimator("emotions_estimator.xml")
-        faceQualityEstimator = service.createFaceQualityEstimator("face_quality_estimator.xml")
-    }
+
 }

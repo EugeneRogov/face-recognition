@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import com.liqvid.facerecognition.Demo
+import com.liqvid.facerecognition.FaceRecognition
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
 import com.vdt.face_recognition.sdk.FacerecService
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var camera: TheCamera? = null
-    private var demo: Demo? = null
+    private var faceRecognition: FaceRecognition? = null
 
     // Settings
     private var cameraId = 1
@@ -182,8 +182,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (camera != null && demo != null) {
-            camera!!.open(demo, cameraId, imWidth, imHeight)
+        if (camera != null && faceRecognition != null) {
+            camera!!.open(faceRecognition, cameraId, imWidth, imHeight)
         }
     }
 
@@ -195,8 +195,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         if (camera != null)
             camera!!.close()
-        if (demo != null)
-            demo!!.dispose()
+        if (faceRecognition != null)
+            faceRecognition!!.dispose()
         super.onDestroy()
     }
 
@@ -208,14 +208,14 @@ class MainActivity : AppCompatActivity() {
                     cameraId = data!!.getIntExtra("cam_id", cameraId)
                     val stemp = data.getStringExtra("selected_resolution")
                     if (stemp != stringResolution) {
-                        demo!!.updateCapture()
+                        faceRecognition?.updateCapture()
                         setNewResolution(stemp)
                     }
                 }
                 REQUEST_OPTIONS -> {
                     flags = data!!.getBooleanArrayExtra("flags")
                     faceCutTypeId = data.getIntExtra("faceCutTypeId", 0)
-                    demo!!.setOptions(flags, faceCutTypeId)
+                    faceRecognition!!.setOptions(flags, faceCutTypeId)
                 }
             }
         }
@@ -226,11 +226,11 @@ class MainActivity : AppCompatActivity() {
         override fun run() {
             try {
                 val camera = TheCamera(ma)
-                val demo = Demo(ma, service)
+                val demo = FaceRecognition(ma, service)
                 ma.flags = demo.flags
                 ma.faceCutTypeId = demo.faceCutTypeId
                 ma.runOnUiThread {
-                    ma.demo = demo
+                    ma.faceRecognition = demo
                     ma.camera = camera
                     ma.showForm()
                 }
@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
         val textView = findViewById<View>(R.id.textView) as TextView
         textView.movementMethod = ScrollingMovementMethod()
-        demo!!.setTextView()
+        faceRecognition!!.setTextView()
 
         val quitButton = findViewById<View>(R.id.quit_button) as Button
         quitButton.setOnClickListener { finishAffinity() }
@@ -275,7 +275,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        camera!!.open(demo, cameraId, imWidth, imHeight)
+        camera!!.open(faceRecognition, cameraId, imWidth, imHeight)
     }
 
     private fun setNewResolution(resolution: String) {
