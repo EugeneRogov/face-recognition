@@ -142,12 +142,7 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG, "license_state.ios_app_id        = " + licenseState.ios_app_id)
         Log.i(TAG, "license_state.hardware_reg      = " + licenseState.hardware_reg)
 
-        Thread(
-            LoadThread(
-                this,
-                service
-            )
-        ).start()
+        Thread(LoadThread(this, service)).start()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -175,12 +170,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (camera != null && faceRecognition != null) {
-            camera!!.open(faceRecognition, cameraId, imWidth, imHeight)
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        if (camera != null && faceRecognition != null) {
+//            camera!!.open(faceRecognition, cameraId, imWidth, imHeight)
+//        }
+//    }
 
     override fun onPause() {
         if (camera != null) camera!!.close()
@@ -246,11 +241,15 @@ class MainActivity : AppCompatActivity() {
 
         faceRecognition?.setTextView()
 
-        camera?.open(faceRecognition, cameraId, imWidth, imHeight)
 
-        btnStart.setOnClickListener {  }
 
-        btnStop.setOnClickListener {  }
+        btnStart.setOnClickListener {
+            camera?.open(faceRecognition, cameraId, imWidth, imHeight)
+        }
+
+        btnStop.setOnClickListener {
+            camera?.close()
+        }
 
         btnChooseCamera.setOnClickListener {
             val toSettingsIntent = Intent(applicationContext, ChooseCameraActivity::class.java)
