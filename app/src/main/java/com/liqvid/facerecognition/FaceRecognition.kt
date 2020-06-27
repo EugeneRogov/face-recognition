@@ -20,14 +20,22 @@ import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-class FaceRecognition(private val activity: Activity, service: FacerecService) {
+class FaceRecognition(
+    private val activity: Activity,
+    service: FacerecService) {
     companion object {
         val TAG: String = FaceRecognition::class.java.simpleName
+
+        private const val STREAMS_COUNT: Int = 2
+        private const val PROCESSING_THREADS_COUNT: Int = 2
+        private const val MATCHING_THREADS_COUNT: Int = 1
     }
 
     private var textView: TextView? = null
-    private var service: FacerecService? = null
-    private var capturer: Capturer? = null
+    private var faceRecService: FacerecService = service
+
+        private var capturer: Capturer
+//    private var videoWorker: VideoWorker
     private var qualityEstimator: QualityEstimator? = null
     private var ageGenderEstimator: AgeGenderEstimator? = null
     private var emotionsEstimator: EmotionsEstimator? = null
@@ -45,10 +53,20 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
     private var faceCutType: FaceCutType? = null
 
     init {
-        this.service = service
         val captureConf = service.Config("fda_tracker_capturer.xml")
         captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
+
         capturer = service.createCapturer(captureConf)
+//        videoWorker = faceRecService.createVideoWorker(
+//            captureConf,
+//            "",
+//            STREAMS_COUNT,
+//            PROCESSING_THREADS_COUNT,
+//            MATCHING_THREADS_COUNT
+//        )
+
+
+
         qualityEstimator = service.createQualityEstimator("quality_estimator.xml")
         ageGenderEstimator = service.createAgeGenderEstimator("age_gender_estimator.xml")
         emotionsEstimator = service.createEmotionsEstimator("emotions_estimator.xml")
@@ -57,18 +75,27 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
 
     fun updateCapture() {
         // force free resources otherwise licence error may occur when create sdk object in next time
-        if (capturer != null) {
-            capturer!!.dispose()
-        }
-        val captureConf = service!!.Config("fda_tracker_capturer.xml")
+        capturer.dispose()
+//        videoWorker.dispose()
+
+
+        val captureConf = faceRecService.Config("fda_tracker_capturer.xml")
         captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
-        capturer = service?.createCapturer(captureConf)
+
+
+        capturer = faceRecService.createCapturer(captureConf)
+//        videoWorker = faceRecService.createVideoWorker(
+//            captureConf,
+//            "",
+//            STREAMS_COUNT,
+//            PROCESSING_THREADS_COUNT,
+//            MATCHING_THREADS_COUNT
+//        )
     }
 
     fun setTextView() {
         textView = activity.findViewById<View>(R.id.textView) as TextView
     }
-
 
 
     fun processingImage(canvas: Canvas, data: ByteArray?, width: Int, height: Int) {
@@ -78,7 +105,7 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
         paint.style = Paint.Style.STROKE
         var text = ""
         val rawImage = RawImage(width, height, RawImage.Format.FORMAT_YUV_NV21, data)
-        val samples = capturer!!.capture(rawImage)
+        val samples = capturer.capture(rawImage)
         if (samples.isEmpty()) return
 
         // output info for one person
@@ -122,7 +149,7 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
             // here we get/create the liveness estimator that work with this face
             val id = sample.id
             if (!id2le.containsKey(id)) {
-                id2le[id] = service!!.createLivenessEstimator()
+                id2le[id] = faceRecService!!.createLivenessEstimator()
             }
             val le = id2le[id]
 
@@ -286,6 +313,8 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
             activity.findViewById<View>(R.id.emotions).visibility = View.GONE
         }
         textView!!.text = text
+
+        Log.i(TAG, text)
     }
 
     fun setOptions(flags: BooleanArray?, faceCutTypeId: Int) {
@@ -321,8 +350,8 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
         get() = if (faceCutType != null) faceCutType!!.ordinal else 0
 
     fun dispose() {
-        service?.dispose()
-        capturer?.dispose()
+        faceRecService.dispose()
+        capturer.dispose()
         qualityEstimator?.dispose()
         ageGenderEstimator?.dispose()
         emotionsEstimator?.dispose()
@@ -335,8 +364,6 @@ class FaceRecognition(private val activity: Activity, service: FacerecService) {
         p.weight = weight
         view.layoutParams = p
     }
-
-
 
 
 }
