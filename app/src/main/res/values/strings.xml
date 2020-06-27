@@ -29,7 +29,7 @@
     <string name="full_cut_radio_button">full cut</string>
     <string name="token_cut_radio_button">token cut</string>
 
-    <!-- permissions layout -->
+    <!-- main_activity_permissions layout -->
     <string name="explain_CAMERA">
         This demo require camera access.
     </string>
@@ -43,4 +43,6 @@
     <string name="close">Close</string>
     <string name="ok">OK</string>
     <string name="face_cut">Face cut:</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 </resources>

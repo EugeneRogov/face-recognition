@@ -167,7 +167,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/tvData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="100"
@@ -181,34 +181,54 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.36"
+            android:layout_weight="0.66"
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/settings_button"
+                android:id="@+id/btnStart"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_alignLeft="@id/textView"
+                android:layout_alignLeft="@id/tvData"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="0.12"
+                android:text="@string/start" />
+
+            <Button
+                android:id="@+id/btnStop"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignLeft="@id/tvData"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="0.12"
+                android:text="@string/stop" />
+
+            <Button
+                android:id="@+id/btnChooseCamera"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignLeft="@id/tvData"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_weight="0.12"
                 android:text="@string/settings_button_text" />
 
             <Button
-                android:id="@+id/options_button"
+                android:id="@+id/btnOptions"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_alignLeft="@id/textView"
+                android:layout_alignLeft="@id/tvData"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_weight="0.12"
                 android:text="@string/options_button_text" />
 
             <Button
-                android:id="@+id/quit_button"
+                android:id="@+id/btnQuit"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_alignLeft="@id/textView"
+                android:layout_alignLeft="@id/tvData"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_weight="0.12"

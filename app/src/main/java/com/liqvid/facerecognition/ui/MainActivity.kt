@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -22,6 +21,7 @@ import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
+import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
 import java.util.*
 
@@ -101,10 +101,9 @@ class MainActivity : AppCompatActivity() {
             ""
         }
 
-        // view permissions status
-        setContentView(R.layout.permissions)
+        setContentView(R.layout.main_activity_permissions)
 
-        // check and request permissions
+        // check and request main_activity_permissions
         var grantedCount = 0
         for (i in permissionsStr.indices) {
             val perstr = permissionsStr[i]
@@ -129,7 +128,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun starting() {
-        setContentView(R.layout.splash)
+        setContentView(R.layout.main_activity_splash)
 
         val service = FacerecService.createService(
             applicationInfo.nativeLibraryDir + "/libfacerec.so",
@@ -151,11 +150,7 @@ class MainActivity : AppCompatActivity() {
         ).start()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         var askAgain = false
         for (i in permissions.indices) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -244,28 +239,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showForm() {
+    private fun showForm() {
         setContentView(R.layout.main_activity)
-        val textView = findViewById<View>(R.id.textView) as TextView
-        textView.movementMethod = ScrollingMovementMethod()
-        faceRecognition!!.setTextView()
 
-        val quitButton = findViewById<View>(R.id.quit_button) as Button
-        quitButton.setOnClickListener { finishAffinity() }
+        tvData.movementMethod = ScrollingMovementMethod()
 
-        val optionsButton = findViewById<View>(R.id.options_button) as Button
-        optionsButton.setOnClickListener {
-            val toOptionsIntent = Intent(applicationContext, OptionsActivity::class.java)
-            toOptionsIntent.putExtra("flags", flags)
-            toOptionsIntent.putExtra("faceCutTypeId", faceCutTypeId)
-            startActivityForResult(
-                toOptionsIntent,
-                REQUEST_OPTIONS
-            )
-        }
+        faceRecognition?.setTextView()
 
-        val settingsButton = findViewById<View>(R.id.settings_button) as Button
-        settingsButton.setOnClickListener {
+        camera?.open(faceRecognition, cameraId, imWidth, imHeight)
+
+        btnStart.setOnClickListener {  }
+
+        btnStop.setOnClickListener {  }
+
+        btnChooseCamera.setOnClickListener {
             val toSettingsIntent = Intent(applicationContext, ChooseCameraActivity::class.java)
             toSettingsIntent.putExtra(ChooseCameraActivity.EXTRA_SELECTED_CAMERA_ID, cameraId)
             toSettingsIntent.putExtra("selected_resolution", stringResolution)
@@ -275,7 +262,17 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        camera!!.open(faceRecognition, cameraId, imWidth, imHeight)
+        btnOptions.setOnClickListener {
+            val toOptionsIntent = Intent(applicationContext, OptionsActivity::class.java)
+            toOptionsIntent.putExtra("flags", flags)
+            toOptionsIntent.putExtra("faceCutTypeId", faceCutTypeId)
+            startActivityForResult(
+                toOptionsIntent,
+                REQUEST_OPTIONS
+            )
+        }
+
+        btnQuit.setOnClickListener { finishAffinity() }
     }
 
     private fun setNewResolution(resolution: String) {

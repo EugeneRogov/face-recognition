@@ -94,7 +94,7 @@ class FaceRecognition(
     }
 
     fun setTextView() {
-        textView = activity.findViewById<View>(R.id.textView) as TextView
+        textView = activity.findViewById<View>(R.id.tvData) as TextView
     }
 
 
