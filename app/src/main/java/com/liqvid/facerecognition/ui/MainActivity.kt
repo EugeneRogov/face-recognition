@@ -4,26 +4,30 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
+import android.util.Size
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
+import androidx.camera.core.*
+import androidx.camera.core.impl.ImageAnalysisConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.liqvid.facerecognition.FaceRecognition
 import com.liqvid.facerecognition.R
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
+import com.vdt.face_recognition.sdk.utils.Converter_YUV_NV_2_ARGB
 import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
 import java.util.*
@@ -149,7 +153,7 @@ class MainActivity : AppCompatActivity() {
     private fun showForm(facerecService: FacerecService?) {
         setContentView(R.layout.main_activity)
 
-        startCamera()
+        startCamera(facerecService)
 
         tvData.movementMethod = ScrollingMovementMethod()
 
@@ -211,17 +215,47 @@ class MainActivity : AppCompatActivity() {
 //        }
 //    }
 
-    private fun startCamera() {
+//    fun decodeBitmap(image: ImageProxy): Bitmap? {
+//        val buffer = image.planes[0].buffer
+//        val bytes = ByteArray(buffer.capacity()).also { buffer.get(it) }
+//        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+//    }
+
+    fun decodeBitmap(image: ImageProxy): ByteArray? {
+        val buffer = image.planes[0].buffer
+        return ByteArray(buffer.capacity()).also { buffer.get(it) }
+    }
+
+    private fun startCamera(facerecService: FacerecService?) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+        val fr = FaceRecognition(this, facerecService!!)
+
 
         cameraProviderFuture.addListener(Runnable {
             // used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+
             // preview
-            val preview = Preview.Builder().build()
+            val preview = Preview.Builder()
+                .setTargetResolution(Size(imWidth, imHeight))
+                .build()
 
 
-            // select back camera
+            val imageAnalysis = ImageAnalysis.Analyzer {
+                val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, decodeBitmap(it), imWidth, imHeight)
+                val immutBitmap = Bitmap.createBitmap(argb, imWidth, imHeight, Bitmap.Config.ARGB_8888)
+                val mutBitmap = immutBitmap.copy(Bitmap.Config.ARGB_8888, true)
+                val canvas = Canvas(mutBitmap)
+                fr.processingImage(canvas, decodeBitmap(it), imWidth, imHeight)
+                it.close()
+            }
+
+
+
+
+            // select front camera
             val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
 
             try {
@@ -235,6 +269,13 @@ class MainActivity : AppCompatActivity() {
                 preview.setSurfaceProvider(pv.createSurfaceProvider())
 
 
+
+//                val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, arg0, imWidth, imHeight)
+//                val immutBitmap = Bitmap.createBitmap(argb, imWidth, imHeight, Bitmap.Config.ARGB_8888)
+//                val mutBitmap = immutBitmap.copy(Bitmap.Config.ARGB_8888, true)
+//                val canvas = Canvas(mutBitmap)
+//
+//                fr.processingImage(canvas, arg0, imWidth, imHeight)
 
 
 
@@ -305,5 +346,7 @@ class MainActivity : AppCompatActivity() {
 
     private val stringResolution: String
         private get() = imWidth.toString() + "x" + imHeight.toString()
+
+
 
 }
