@@ -126,7 +126,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
     }
 
     override fun onPreviewFrame(arg0: ByteArray, arg1: Camera) {
-        image = activity?.findViewById<View>(R.id.imageView) as ImageView
+        image = activity?.findViewById<View>(R.id.pv) as ImageView
         val parameters = arg1.parameters
         val size = parameters.previewSize
         val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, arg0, size.width, size.height)

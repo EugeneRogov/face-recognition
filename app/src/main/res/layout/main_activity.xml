@@ -6,7 +6,7 @@
     android:orientation="horizontal">
 
     <androidx.camera.view.PreviewView
-        android:id="@+id/imageView"
+        android:id="@+id/pv"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.7"
