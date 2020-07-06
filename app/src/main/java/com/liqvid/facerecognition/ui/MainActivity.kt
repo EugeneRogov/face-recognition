@@ -13,6 +13,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraX
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -53,7 +59,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var camera: TheCamera? = null
+    //    private var camera: TheCamera? = null
+    private var camera: Camera? = null
     private var faceRecognition: FaceRecognition? = null
 
     // Settings
@@ -84,10 +91,13 @@ class MainActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         // observe data
         model.downloadFaceNdkStatus().observe(this, Observer { data ->
             if (data)
-                starting()
+//                starting()
+            showForm()
+
             else
                 Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show()
         })
@@ -129,23 +139,59 @@ class MainActivity : AppCompatActivity() {
 
     private fun starting() {
         setContentView(R.layout.main_activity_splash)
+//
+//        val service = FacerecService.createService(
+//            applicationInfo.nativeLibraryDir + "/libfacerec.so",
+//            "/sdcard/face_recognition/conf/facerec",
+//            onlineLicenceDir
+//        )
+//        val licenseState = service.licenseState
+//
+//        Log.i(TAG, "license_state.online            = " + licenseState.online)
+//        Log.i(TAG, "license_state.android_app_id    = " + licenseState.android_app_id)
+//        Log.i(TAG, "license_state.ios_app_id        = " + licenseState.ios_app_id)
+//        Log.i(TAG, "license_state.hardware_reg      = " + licenseState.hardware_reg)
 
-        val service = FacerecService.createService(
-            applicationInfo.nativeLibraryDir + "/libfacerec.so",
-            "/sdcard/face_recognition/conf/facerec",
-            onlineLicenceDir
-        )
-        val licenseState = service.licenseState
+//        Thread(LoadThread(this, service)).start()
 
-        Log.i(TAG, "license_state.online            = " + licenseState.online)
-        Log.i(TAG, "license_state.android_app_id    = " + licenseState.android_app_id)
-        Log.i(TAG, "license_state.ios_app_id        = " + licenseState.ios_app_id)
-        Log.i(TAG, "license_state.hardware_reg      = " + licenseState.hardware_reg)
 
-        Thread(LoadThread(this, service)).start()
+
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+        cameraProviderFuture.addListener(Runnable {
+            // used to bind the lifecycle of cameras to the lifecycle owner
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            // preview
+            val preview = Preview.Builder().build()
+
+
+            // select back camera
+            val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
+
+            try {
+                // unbind use cases before rebinding
+                cameraProvider.unbindAll()
+
+                // bind use cases to camera
+                camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview)
+
+                preview.setSurfaceProvider(imageView.createSurfaceProvider(camera?.cameraInfo))
+            } catch (exc: Exception) {
+                Log.e(TAG, "Use case binding failed", exc)
+            }
+
+        }, ContextCompat.getMainExecutor(this))
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         var askAgain = false
         for (i in permissions.indices) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -178,15 +224,15 @@ class MainActivity : AppCompatActivity() {
 //    }
 
     override fun onPause() {
-        if (camera != null) camera!!.close()
+//        if (camera != null) camera!!.close()
         super.onPause()
     }
 
     override fun onDestroy() {
-        if (camera != null)
-            camera!!.close()
-        if (faceRecognition != null)
-            faceRecognition!!.dispose()
+//        if (camera != null)
+//            camera!!.close()
+//        if (faceRecognition != null)
+//            faceRecognition!!.dispose()
         super.onDestroy()
     }
 
@@ -211,31 +257,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private class LoadThread(var ma: MainActivity, var service: FacerecService) :
-        Runnable {
-        override fun run() {
-            try {
-                val camera = TheCamera(ma)
-                val demo = FaceRecognition(ma, service)
-                ma.flags = demo.flags
-                ma.faceCutTypeId = demo.faceCutTypeId
-                ma.runOnUiThread {
-                    ma.faceRecognition = demo
-                    ma.camera = camera
-                    ma.showForm()
-                }
-            } catch (e: Exception) {
-                exceptionHappensDo(
-                    ma,
-                    e
-                )
-                return
-            }
-        }
-    }
+//    private class LoadThread(var ma: MainActivity, var service: FacerecService) :
+//        Runnable {
+//        override fun run() {
+//            try {
+//                val camera = TheCamera(ma)
+//                val demo = FaceRecognition(ma, service)
+//                ma.flags = demo.flags
+//                ma.faceCutTypeId = demo.faceCutTypeId
+//                ma.runOnUiThread {
+//                    ma.faceRecognition = demo
+//                    ma.camera = camera
+//                    ma.showForm()
+//                }
+//            } catch (e: Exception) {
+//                exceptionHappensDo(
+//                    ma,
+//                    e
+//                )
+//                return
+//            }
+//        }
+//    }
 
     private fun showForm() {
         setContentView(R.layout.main_activity)
+
+        startCamera()
 
         tvData.movementMethod = ScrollingMovementMethod()
 
@@ -244,11 +292,11 @@ class MainActivity : AppCompatActivity() {
 
 
         btnStart.setOnClickListener {
-            camera?.open(faceRecognition, cameraId, imWidth, imHeight)
+//            camera?.open(faceRecognition, cameraId, imWidth, imHeight)
         }
 
         btnStop.setOnClickListener {
-            camera?.close()
+//            camera?.close()
         }
 
         btnChooseCamera.setOnClickListener {

@@ -75,10 +75,11 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         this.painter = painter
         openFlag = true
         this.camId = cam_id
-//        if (camera != null) return
+        if (camera != null) return
         Log.i(TAG, "Open camera $cam_id")
         try {
-            camera = Camera.open(cam_id)
+//            camera = Camera.open(cam_id)
+            camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT)
             var camParameters = camera?.parameters
             val fpsRanges = camParameters!!.supportedPreviewFpsRange
             val maxFpsRange = fpsRanges[fpsRanges.size - 1]
