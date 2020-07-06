@@ -178,7 +178,9 @@ class MainActivity : AppCompatActivity() {
                 // bind use cases to camera
                 camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview)
 
-                preview.setSurfaceProvider(imageView.createSurfaceProvider(camera?.cameraInfo))
+//                preview.setSurfaceProvider(imageView.createSurfaceProvider(camera?.cameraInfo))
+                preview.setSurfaceProvider(imageView.createSurfaceProvider())
+
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
