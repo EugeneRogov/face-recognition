@@ -49,7 +49,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
                 return result
             }
     }
-    private lateinit var camera: Camera
+    private var camera: Camera? = null
     private var activity: Activity? = null
     private var image: ImageView? = null
     private var painter: FaceRecognition? = null
@@ -79,29 +79,29 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         Log.i(TAG, "Open camera $cam_id")
         try {
             camera = Camera.open(cam_id)
-            var camParameters = camera.parameters
+            var camParameters = camera?.parameters
             val fpsRanges = camParameters!!.supportedPreviewFpsRange
             val maxFpsRange = fpsRanges[fpsRanges.size - 1]
             Log.i(TAG, "Set FPS Range (" + maxFpsRange[0] + "," + maxFpsRange[1] + ")")
             camParameters.previewFormat = ImageFormat.NV21
             camParameters.setPreviewSize(width, height)
             camParameters.setPreviewFpsRange(maxFpsRange[0], maxFpsRange[1])
-            camera.parameters = camParameters
-            camParameters = camera.parameters
+            camera?.parameters = camParameters
+            camParameters = camera?.parameters
             val psize = camParameters?.previewSize
             var size = psize!!.width * psize.height
-            size = size * ImageFormat.getBitsPerPixel(camParameters.previewFormat) / 8
+            size = size * ImageFormat.getBitsPerPixel(camParameters!!.previewFormat) / 8
             buf = ByteArray(size)
             surfaceTexture = SurfaceTexture(MAGIC_TEXTURE_ID)
             try {
-                camera.setPreviewTexture(surfaceTexture)
+                camera?.setPreviewTexture(surfaceTexture)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            camera.addCallbackBuffer(buf)
-            camera.setPreviewCallbackWithBuffer(this)
-            camera.setDisplayOrientation(0)
-            camera.startPreview()
+            camera?.addCallbackBuffer(buf)
+            camera?.setPreviewCallbackWithBuffer(this)
+            camera?.setDisplayOrientation(0)
+            camera?.startPreview()
         } catch (e: Exception) {
             Log.e(TAG, "Can't open the camera $cam_id")
             e.printStackTrace()
@@ -118,9 +118,9 @@ class TheCamera(activity: Activity?) : PreviewCallback {
             return
 
         Log.i(TAG, "TheCamera close")
-        camera.setPreviewCallback(null)
-        camera.stopPreview()
-        camera.release()
+        camera?.setPreviewCallback(null)
+        camera?.stopPreview()
+        camera?.release()
 //        camera = null
     }
 
@@ -155,7 +155,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
             return
         }
         image!!.setImageBitmap(mutBitmap)
-        camera.addCallbackBuffer(buf)
+        camera?.addCallbackBuffer(buf)
     }
 
 }
