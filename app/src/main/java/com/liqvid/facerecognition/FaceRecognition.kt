@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.liqvid.facerecognition.ui.MainActivity
 import com.vdt.face_recognition.sdk.*
 import com.vdt.face_recognition.sdk.AgeGenderEstimator.Age
 import com.vdt.face_recognition.sdk.AgeGenderEstimator.Gender
@@ -42,11 +43,11 @@ class FaceRecognition(
     private var faceQualityEstimator: FaceQualityEstimator? = null
     private var flagRectangle = true
     private var flagAngles = true
-    private var flagQuality = false
-    private var flagLiveness = false
-    private var flagAgeAndGender = false
+    private var flagQuality = true
+    private var flagLiveness = true
+    private var flagAgeAndGender = true
     private var flagPoints = true
-    private var flagFaceQuality = false
+    private var flagFaceQuality = true
     private var flagAnglesVectors = true
     private var flagEmotions = false
     private val id2le = HashMap<Int, LivenessEstimator>()
@@ -99,6 +100,7 @@ class FaceRecognition(
 
 
     fun processingImage(canvas: Canvas, data: ByteArray?, width: Int, height: Int) {
+        Log.i(TAG, "processingImage ")
         val paint = Paint()
         paint.color = -0x10000
         paint.strokeWidth = 3f
@@ -126,6 +128,9 @@ class FaceRecognition(
         // head angles
         if (flagAngles) {
             val angles = sample.angles
+
+            Log.i(TAG, "angles " + angles)
+
             text += """Angles:
 	yaw:	${angles.yaw}
 	pitch:	${angles.pitch}

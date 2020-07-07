@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
@@ -235,11 +236,11 @@ class MainActivity : AppCompatActivity() {
 
 
             // Fatal signal 11 (SIGSEGV), code 1, fault addr 0x98712000 in tid 24865 (pool-1-thread-1)
-//            val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, image.toBitmap().toByteArray(), imWidth, imHeight)
-//            val immutBitmap = Bitmap.createBitmap(argb, imWidth, imHeight, Bitmap.Config.ARGB_8888)
-//            val mutBitmap = immutBitmap.copy(Bitmap.Config.ARGB_8888, true)
-//            val canvas = Canvas(mutBitmap)
-//            fr.processingImage(Canvas(), toByteArray(image), imWidth, imHeight)
+            val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, image.toBitmap().toByteArray(), imWidth, imHeight)
+            val immutBitmap = Bitmap.createBitmap(argb, imWidth, imHeight, Bitmap.Config.ARGB_8888)
+            val mutBitmap = immutBitmap.copy(Bitmap.Config.ARGB_8888, true)
+            val canvas = Canvas(mutBitmap)
+            fr.processingImage(canvas, image.toBitmap().toByteArray(), imWidth, imHeight)
             image.close()
         }
 
