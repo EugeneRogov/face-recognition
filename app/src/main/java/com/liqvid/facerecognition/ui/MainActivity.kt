@@ -19,6 +19,7 @@ import androidx.lifecycle.Observer
 import com.liqvid.facerecognition.FaceRecognition
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
+import com.liqvid.facerecognition.Utils
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
 import kotlinx.android.synthetic.main.main_activity.*
@@ -145,7 +146,11 @@ class MainActivity : AppCompatActivity() {
         Thread(LoadThread(this, service)).start()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         var askAgain = false
         for (i in permissions.indices) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -241,14 +246,22 @@ class MainActivity : AppCompatActivity() {
 
         faceRecognition?.setTextView()
 
-
-
         btnStart.setOnClickListener {
-            camera?.open(faceRecognition, cameraId, imWidth, imHeight)
+            if (Utils.isCameraAvailable(baseContext)) {
+                camera?.open(faceRecognition, cameraId, imWidth, imHeight)
+                Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
+            } else
+                Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
         }
 
         btnStop.setOnClickListener {
-            camera?.close()
+            btnStart.setOnClickListener {
+                if (Utils.isCameraAvailable(baseContext)) {
+                    camera?.close()
+                    Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
+                } else
+                    Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnChooseCamera.setOnClickListener {
