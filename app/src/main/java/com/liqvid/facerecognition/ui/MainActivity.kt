@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.hardware.Camera
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
@@ -247,9 +248,10 @@ class MainActivity : AppCompatActivity() {
         faceRecognition?.setTextView()
 
         btnStart.setOnClickListener {
+            val count = Camera.getNumberOfCameras()
             if (Utils.isCameraAvailable(baseContext)) {
                 camera?.open(faceRecognition, cameraId, imWidth, imHeight)
-                Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "This device has camera, count of cameras " + count , Toast.LENGTH_SHORT).show()
             } else
                 Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
         }
