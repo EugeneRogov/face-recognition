@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     private var faceRecognition: FaceRecognition? = null
 
     // Settings
-    private var cameraId = 1
+    private var cameraId = 0
     private var imWidth = 640
     private var imHeight = 480
 
