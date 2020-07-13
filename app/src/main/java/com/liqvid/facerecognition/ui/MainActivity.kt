@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        cameraId = Utils.getCameraId(baseContext)
 
         // observe data
         model.downloadFaceNdkStatus().observe(this, Observer { data ->
@@ -251,19 +252,21 @@ class MainActivity : AppCompatActivity() {
             val count = Camera.getNumberOfCameras()
             if (Utils.isCameraAvailable(baseContext)) {
                 camera?.open(faceRecognition, cameraId, imWidth, imHeight)
-                Toast.makeText(this, "This device has camera, count of cameras " + count , Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "This device has camera, count of cameras " + count,
+                    Toast.LENGTH_SHORT
+                ).show()
             } else
                 Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
         }
 
         btnStop.setOnClickListener {
-            btnStart.setOnClickListener {
-                if (Utils.isCameraAvailable(baseContext)) {
-                    camera?.close()
-                    Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
-                } else
-                    Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
-            }
+            if (Utils.isCameraAvailable(baseContext)) {
+                camera?.close()
+                Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
+            } else
+                Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
         }
 
         btnChooseCamera.setOnClickListener {
