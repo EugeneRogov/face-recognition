@@ -22,20 +22,16 @@ import kotlin.math.sin
 
 class FaceRecognition(
     private val activity: Activity,
-    service: FacerecService) {
+    service: FacerecService
+) {
     companion object {
         val TAG: String = FaceRecognition::class.java.simpleName
-
-        private const val STREAMS_COUNT: Int = 2
-        private const val PROCESSING_THREADS_COUNT: Int = 2
-        private const val MATCHING_THREADS_COUNT: Int = 1
     }
 
     private var textView: TextView? = null
     private var faceRecService: FacerecService = service
 
-        private var capturer: Capturer
-//    private var videoWorker: VideoWorker
+    private var capturer: Capturer
     private var qualityEstimator: QualityEstimator? = null
     private var ageGenderEstimator: AgeGenderEstimator? = null
     private var emotionsEstimator: EmotionsEstimator? = null
@@ -57,15 +53,6 @@ class FaceRecognition(
         captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
 
         capturer = service.createCapturer(captureConf)
-//        videoWorker = faceRecService.createVideoWorker(
-//            captureConf,
-//            "",
-//            STREAMS_COUNT,
-//            PROCESSING_THREADS_COUNT,
-//            MATCHING_THREADS_COUNT
-//        )
-
-
 
         qualityEstimator = service.createQualityEstimator("quality_estimator.xml")
         ageGenderEstimator = service.createAgeGenderEstimator("age_gender_estimator.xml")
@@ -76,21 +63,12 @@ class FaceRecognition(
     fun updateCapture() {
         // force free resources otherwise licence error may occur when create sdk object in next time
         capturer.dispose()
-//        videoWorker.dispose()
-
 
         val captureConf = faceRecService.Config("fda_tracker_capturer.xml")
         captureConf.overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
 
 
         capturer = faceRecService.createCapturer(captureConf)
-//        videoWorker = faceRecService.createVideoWorker(
-//            captureConf,
-//            "",
-//            STREAMS_COUNT,
-//            PROCESSING_THREADS_COUNT,
-//            MATCHING_THREADS_COUNT
-//        )
     }
 
     fun setTextView() {
@@ -364,6 +342,5 @@ class FaceRecognition(
         p.weight = weight
         view.layoutParams = p
     }
-
 
 }
