@@ -52,7 +52,6 @@ class TheCamera(activity: Activity?) : PreviewCallback {
     private var camera: Camera? = null
     private var activity: Activity? = null
     private var image: ImageView? = null
-    private var painter: FaceRecognition? = null
     private var camId = 0
     private var surfaceTexture: SurfaceTexture? = null
 
@@ -69,8 +68,10 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         var resolutions: List<Camera.Size>? = null
     }
 
+    private var painter: TheCameraPainter? = null
+
     @Synchronized
-    fun open(painter: FaceRecognition?, cam_id: Int, width: Int, height: Int) {
+    fun open(painter: TheCameraPainter, cam_id: Int, width: Int, height: Int) {
         if (openFlag) return
         this.painter = painter
         openFlag = true
@@ -131,9 +132,9 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         val argb = Converter_YUV_NV_2_ARGB.convert_yuv_nv_2_argb(false, arg0, size.width, size.height)
         val immutBitmap = Bitmap.createBitmap(argb, size.width, size.height, Bitmap.Config.ARGB_8888)
         val mutBitmap = immutBitmap.copy(Bitmap.Config.ARGB_8888, true)
-        val canvas = Canvas(mutBitmap)
+//        val canvas = Canvas(mutBitmap)
         try {
-            painter!!.processingImage(canvas, arg0, size.width, size.height)
+            painter!!.processingImage(arg0, size.width, size.height)
         } catch (e: Exception) {
             val toErrorIntent = Intent(activity, ErrorActivity::class.java)
             toErrorIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP

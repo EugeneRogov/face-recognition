@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
                     cameraId = data!!.getIntExtra("cam_id", cameraId)
                     val stemp = data.getStringExtra("selected_resolution")
                     if (stemp != stringResolution) {
-                        faceRecognition?.updateCapture()
+//                        faceRecognition?.updateCapture()
                         setNewResolution(stemp)
                     }
                 }
@@ -251,7 +251,7 @@ class MainActivity : AppCompatActivity() {
         btnStart.setOnClickListener {
             val count = Camera.getNumberOfCameras()
             if (Utils.isCameraAvailable(baseContext)) {
-                camera?.open(faceRecognition, cameraId, imWidth, imHeight)
+                camera?.open(faceRecognition!!, cameraId, imWidth, imHeight)
                 Toast.makeText(
                     this,
                     "This device has camera, count of cameras " + count,
