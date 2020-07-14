@@ -29,13 +29,16 @@ class FaceRecognition(
         private const val STREAMS_COUNT: Int = 2
         private const val PROCESSING_THREADS_COUNT: Int = 2
         private const val MATCHING_THREADS_COUNT: Int = 1
+
+
+
     }
 
     private var textView: TextView? = null
     private var faceRecService: FacerecService = service
 
         private var capturer: Capturer
-//    private var videoWorker: VideoWorker
+    private var videoWorker: VideoWorker
     private var qualityEstimator: QualityEstimator? = null
     private var ageGenderEstimator: AgeGenderEstimator? = null
     private var emotionsEstimator: EmotionsEstimator? = null
@@ -71,6 +74,27 @@ class FaceRecognition(
         ageGenderEstimator = service.createAgeGenderEstimator("age_gender_estimator.xml")
         emotionsEstimator = service.createEmotionsEstimator("emotions_estimator.xml")
         faceQualityEstimator = service.createFaceQualityEstimator("face_quality_estimator.xml")
+
+
+
+        //create videoWorker
+        videoWorker = service.createVideoWorker(
+            VideoWorker.Params()
+                .video_worker_config(
+                    service.Config("video_worker_fdatracker.xml")
+                        .overrideParameter("search_k", 10.0)
+                        .overrideParameter("downscale_rawsamples_to_preferred_size", 0.0)
+                )
+                .recognizer_ini_file(Const.VideoWorker.MethodRecognizer.METHOD_9_V30)
+                .streams_count(1)
+                .processing_threads_count(1)
+                .matching_threads_count(1)
+                // .age_gender_estimation_threads_count(1)
+                // .emotions_estimation_threads_count(1)
+                .short_time_identification_enabled(true)
+                .short_time_identification_distance_threshold(Const.VideoWorker.THRESHOLD.VALUE)
+                .short_time_identification_outdate_time_seconds(5f)
+        )
     }
 
     fun updateCapture() {
