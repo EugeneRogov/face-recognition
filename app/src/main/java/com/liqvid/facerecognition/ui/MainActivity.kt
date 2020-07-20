@@ -21,8 +21,14 @@ import com.liqvid.facerecognition.FaceRecognition
 import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.TheCamera
 import com.liqvid.facerecognition.Utils
+import com.liqvid.facerecognition.face_recognition.InitService
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.functions.BiFunction
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
 import java.util.*
@@ -66,7 +72,6 @@ class MainActivity : AppCompatActivity() {
     // Options
     private lateinit var flags: BooleanArray
     private var faceCutTypeId = 0
-    var onlineLicenceDir: String? = null
 
     private val permissionsStr = arrayOf(
         Manifest.permission.CAMERA,
@@ -83,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
     private val model: MainActivityViewModel by viewModels()
 
+    private val initService: InitService = InitService()
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cameraId = Utils.getCameraId(baseContext)
@@ -96,25 +103,13 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        // if directory with online licence exists then use it otherwise use default offline licence
-        val buf = "/sdcard/face_recognition/online_license"
-        onlineLicenceDir = if (File(buf).exists()) {
-            buf
-        } else {
-            ""
-        }
-
         setContentView(R.layout.main_activity_permissions)
 
         // check and request main_activity_permissions
         var grantedCount = 0
         for (i in permissionsStr.indices) {
             val perstr = permissionsStr[i]
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    perstr
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, perstr) == PackageManager.PERMISSION_GRANTED) {
                 val tv = findViewById<View>(permissionsTvId[i]) as TextView
                 tv.text = " granted "
                 tv.setTextColor(Color.GREEN)
@@ -130,22 +125,60 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var faceRecService: FacerecService? = null
+
     private fun starting() {
         setContentView(R.layout.main_activity_splash)
 
-        val service = FacerecService.createService(
-            applicationInfo.nativeLibraryDir + "/libfacerec.so",
-            "/sdcard/face_recognition/conf/facerec",
-            onlineLicenceDir
-        )
-        val licenseState = service.licenseState
+        initService.initFaceRecService(applicationInfo.nativeLibraryDir + "/libfacerec.so")
+            .subscribe(
+                { frs ->
+                    faceRecService = frs
+                    Log.i(TAG, "initFaceRecService ok")
 
-        Log.i(TAG, "license_state.online            = " + licenseState.online)
-        Log.i(TAG, "license_state.android_app_id    = " + licenseState.android_app_id)
-        Log.i(TAG, "license_state.ios_app_id        = " + licenseState.ios_app_id)
-        Log.i(TAG, "license_state.hardware_reg      = " + licenseState.hardware_reg)
+                    initService.initFaceRecognition(this, faceRecService!!)
+                        .subscribe(
+                            { fr ->
+                                faceRecognition = fr
+                                Log.i(TAG, "initFaceRecognition ok")
+                            },
+                            { error ->
+                                Log.e(TAG, "initFaceRecognition error ${error.message}")
+                            }
+                        )
+                },
+                { error ->
+                    Log.e(TAG, "initFaceRecService error ${error.message}")
+                }
+            )
 
-        Thread(LoadThread(this, service)).start()
+        initService.initCamera(this)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribeBy(
+//                onNext = {
+//                    camera = it
+//                    Log.i(TAG, "initCamera ok")},
+//                onError = { Log.e(TAG, "initCamera error ${error.message}")}
+//            )
+//            .subscribeBy {
+
+//                (
+//                onNext = { requestListener.success(it) },
+//                onError = { requestListener.fail(it) }
+//                        )
+            .subscribe(
+                {
+                    camera = it
+                    Log.i(TAG, "initCamera ok")
+
+                    showForm()
+                },
+                { error ->
+                    Log.e(TAG, "initCamera error ${error.message}")
+                }
+            )
+
     }
 
     override fun onRequestPermissionsResult(
@@ -185,15 +218,13 @@ class MainActivity : AppCompatActivity() {
 //    }
 
     override fun onPause() {
-        if (camera != null) camera!!.close()
+        camera?.close()
         super.onPause()
     }
 
     override fun onDestroy() {
-        if (camera != null)
-            camera!!.close()
-        if (faceRecognition != null)
-            faceRecognition!!.dispose()
+        camera?.close()
+        faceRecognition?.dispose()
         super.onDestroy()
     }
 
@@ -218,29 +249,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private class LoadThread(var ma: MainActivity, var service: FacerecService) :
-        Runnable {
-        override fun run() {
-            try {
-                val camera = TheCamera(ma)
-                val demo = FaceRecognition(ma, service)
-                ma.flags = demo.flags
-                ma.faceCutTypeId = demo.faceCutTypeId
-                ma.runOnUiThread {
-                    ma.faceRecognition = demo
-                    ma.camera = camera
-                    ma.showForm()
-                }
-            } catch (e: Exception) {
-                exceptionHappensDo(
-                    ma,
-                    e
-                )
-                return
-            }
-        }
-    }
-
     private fun showForm() {
         setContentView(R.layout.main_activity)
 
@@ -251,8 +259,11 @@ class MainActivity : AppCompatActivity() {
         btnStart.setOnClickListener {
             val count = Camera.getNumberOfCameras()
             if (Utils.isCameraAvailable(baseContext)) {
-                camera!!.open(faceRecognition!!, cameraId, imWidth, imHeight)
-                Toast.makeText(this, "This device has camera, count of cameras " + count, Toast.LENGTH_SHORT
+                camera?.open(faceRecognition!!, cameraId, imWidth, imHeight)
+                Toast.makeText(
+                    this,
+                    "This device has camera, count of cameras $count",
+                    Toast.LENGTH_SHORT
                 ).show()
             } else
                 Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
@@ -260,6 +271,8 @@ class MainActivity : AppCompatActivity() {
 
         btnStop.setOnClickListener {
             if (Utils.isCameraAvailable(baseContext)) {
+                faceRecService?.dispose()
+                faceRecognition?.dispose()
                 camera?.close()
                 Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
             } else

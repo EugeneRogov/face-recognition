@@ -7,5 +7,6 @@ object Constant {
     const val FR_ZIP_FILE_PATH = "/sdcard/face_recognition.zip"
     const val FR_FOLDER_PATH = "/sdcard/face_recognition"
     const val FR_CONF_PATH = "/sdcard/face_recognition/conf/facerec"
+    const val FR_LICENCE_DIR_PATH = "/sdcard/face_recognition/online_license"
 
 }

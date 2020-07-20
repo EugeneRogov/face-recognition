@@ -10,7 +10,7 @@ android {
         applicationId "com.liqvid.facerecognition"
         minSdkVersion 21
         targetSdkVersion 28 // API 29 and higher is not supported currently (3DiVi Face SDK)
-        versionCode 13
+        versionCode 14
         versionName "1.0." + getVersionCode()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
