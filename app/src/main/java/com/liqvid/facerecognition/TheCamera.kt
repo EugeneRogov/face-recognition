@@ -76,7 +76,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         this.painter = painter
         openFlag = true
         this.camId = cam_id
-//        if (camera != null) return
+        if (camera != null) return
         Log.i(TAG, "Open camera $cam_id")
         try {
             camera = Camera.open(cam_id)
@@ -122,7 +122,7 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         camera?.setPreviewCallback(null)
         camera?.stopPreview()
         camera?.release()
-//        camera = null
+        camera = null
     }
 
     override fun onPreviewFrame(arg0: ByteArray, arg1: Camera) {
