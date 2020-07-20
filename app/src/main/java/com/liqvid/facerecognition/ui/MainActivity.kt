@@ -131,54 +131,44 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity_splash)
 
         initService.initFaceRecService(applicationInfo.nativeLibraryDir + "/libfacerec.so")
-            .subscribe(
-                { frs ->
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext ={ frs ->
                     faceRecService = frs
                     Log.i(TAG, "initFaceRecService ok")
 
                     initService.initFaceRecognition(this, faceRecService!!)
-                        .subscribe(
-                            { fr ->
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(
+                            onNext ={ fr ->
                                 faceRecognition = fr
                                 Log.i(TAG, "initFaceRecognition ok")
+
+                                showForm()
                             },
-                            { error ->
+                            onError = { error ->
                                 Log.e(TAG, "initFaceRecognition error ${error.message}")
                             }
                         )
                 },
-                { error ->
+                onError = { error ->
                     Log.e(TAG, "initFaceRecService error ${error.message}")
                 }
             )
 
         initService.initCamera(this)
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
-//            .subscribeBy(
-//                onNext = {
-//                    camera = it
-//                    Log.i(TAG, "initCamera ok")},
-//                onError = { Log.e(TAG, "initCamera error ${error.message}")}
-//            )
-//            .subscribeBy {
-
-//                (
-//                onNext = { requestListener.success(it) },
-//                onError = { requestListener.fail(it) }
-//                        )
-            .subscribe(
-                {
+            .subscribeBy(
+                onNext = {
                     camera = it
                     Log.i(TAG, "initCamera ok")
 
-                    showForm()
                 },
-                { error ->
-                    Log.e(TAG, "initCamera error ${error.message}")
-                }
+                onError = { Log.e(TAG, "initCamera error ${it.message}")}
             )
-
     }
 
     override fun onRequestPermissionsResult(
@@ -271,8 +261,8 @@ class MainActivity : AppCompatActivity() {
 
         btnStop.setOnClickListener {
             if (Utils.isCameraAvailable(baseContext)) {
-                faceRecService?.dispose()
-                faceRecognition?.dispose()
+//                faceRecService?.dispose()
+//                faceRecognition?.dispose()
                 camera?.close()
                 Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
             } else
