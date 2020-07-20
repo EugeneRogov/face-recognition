@@ -30,6 +30,9 @@ import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
@@ -249,21 +252,15 @@ class MainActivity : AppCompatActivity() {
         btnStart.setOnClickListener {
             val count = Camera.getNumberOfCameras()
             if (Utils.isCameraAvailable(baseContext)) {
-                camera?.open(faceRecognition!!, cameraId, imWidth, imHeight)
-                Toast.makeText(
-                    this,
-                    "This device has camera, count of cameras $count",
-                    Toast.LENGTH_SHORT
-                ).show()
+                GlobalScope.launch { camera?.open(faceRecognition!!, cameraId, imWidth, imHeight) }
+                Toast.makeText(this, "This device has camera, count of cameras $count", Toast.LENGTH_SHORT).show()
             } else
                 Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
         }
 
         btnStop.setOnClickListener {
             if (Utils.isCameraAvailable(baseContext)) {
-//                faceRecService?.dispose()
-//                faceRecognition?.dispose()
-                camera?.close()
+                GlobalScope.launch { camera?.close() }
                 Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
             } else
                 Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
