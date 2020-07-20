@@ -251,11 +251,8 @@ class MainActivity : AppCompatActivity() {
         btnStart.setOnClickListener {
             val count = Camera.getNumberOfCameras()
             if (Utils.isCameraAvailable(baseContext)) {
-                camera?.open(faceRecognition!!, cameraId, imWidth, imHeight)
-                Toast.makeText(
-                    this,
-                    "This device has camera, count of cameras " + count,
-                    Toast.LENGTH_SHORT
+                camera!!.open(faceRecognition!!, cameraId, imWidth, imHeight)
+                Toast.makeText(this, "This device has camera, count of cameras " + count, Toast.LENGTH_SHORT
                 ).show()
             } else
                 Toast.makeText(this, "This device has no camera", Toast.LENGTH_SHORT).show()
