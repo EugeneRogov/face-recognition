@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.liqvid.data.local.file.UnzipFaceNdkService
 import ru.liqvid.data.remote.api.DownloadFaceNdkService
 import ru.liqvid.util.Constant
-import ru.liqvid.util.File
+import ru.liqvid.util.FileUtils
 import javax.inject.Singleton
 
 @Singleton
@@ -21,7 +21,7 @@ class DownloadFaceNdkRepository() {
     private val unzipFaceNdkService: UnzipFaceNdkService = UnzipFaceNdkService()
 
     fun loadAndPrepareFaceNdk(context: Context, downloadUrl: String, digest: String, l: OnResult) {
-        if (!File.isExistDirectory(Constant.FR_FOLDER_PATH)) {
+        if (!FileUtils.isExistDirectory(Constant.FR_FOLDER_PATH)) {
             downloadFaceNdkService.fetch3DiViFaceSdk(context, downloadUrl)
                 .subscribe(
                     {

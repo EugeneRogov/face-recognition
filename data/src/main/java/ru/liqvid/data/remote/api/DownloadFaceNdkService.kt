@@ -31,7 +31,9 @@ class DownloadFaceNdkService {
 
             val fetch = Fetch.getInstance(fetchConfiguration)
 
-            val request = Request(downloadUrl, Constant.FR_ZIP_FILE_PATH)
+//            val request = Request(downloadUrl, Constant.FR_ZIP_FILE_PATH)
+//            val request = Request("https://getfile.dokpub.com/yandex/get/https://yadi.sk/d/_wc7z3Ov-EhqeQ", Constant.FR_ZIP_FILE_PATH)
+            val request = Request("https://drive.google.com/uc?export=download&id=1AIj816PQ0HPpvWsCdp-apZx4aWkkwGNE", Constant.FR_ZIP_FILE_PATH)
             request.priority = Priority.HIGH
             request.networkType = NetworkType.ALL
             fetch.enqueue(
@@ -63,7 +65,8 @@ class DownloadFaceNdkService {
                 }
 
                 override fun onError(download: Download, error: Error, throwable: Throwable?) {
-                    Log.i(TAG, "onError")
+                    Log.i(TAG, "onError " + throwable?.localizedMessage)
+                    Log.i(TAG, "onError " + error.httpResponse?.code)
                 }
 
                 override fun onPaused(download: Download) {
@@ -75,8 +78,8 @@ class DownloadFaceNdkService {
                 }
 
                 override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-
                     Log.i(TAG, "onQueued")
+                    Log.i(TAG, "onQueued waitingOnNetwork $waitingOnNetwork")
                 }
 
                 override fun onRemoved(download: Download) {

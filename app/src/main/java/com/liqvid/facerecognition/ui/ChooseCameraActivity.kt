@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.liqvid.facerecognition.R
-import com.liqvid.facerecognition.TheCamera
+import com.liqvid.facerecognition.face_recognition.TheCamera
 import kotlinx.android.synthetic.main.choose_camera_activity.*
 import java.util.*
 

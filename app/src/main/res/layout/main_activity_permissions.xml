@@ -94,4 +94,12 @@
         android:layout_gravity="fill_horizontal"
         android:text="@string/explain_READ_PHONE_STATE" />
 
+    <Button
+        android:id="@+id/button123"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="6"
+        android:layout_column="1"
+        android:text="Button" />
+
 </GridLayout>

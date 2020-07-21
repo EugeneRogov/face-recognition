@@ -6,7 +6,7 @@ import java.io.IOException
 import java.math.BigInteger
 import java.security.MessageDigest
 
-object File {
+object FileUtils {
 
     fun isExistDirectory(dirPath: String): Boolean {
         var ret = false

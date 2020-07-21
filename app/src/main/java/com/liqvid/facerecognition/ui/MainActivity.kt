@@ -17,23 +17,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import com.liqvid.facerecognition.FaceRecognition
+import com.liqvid.facerecognition.face_recognition.FaceRecognition
 import com.liqvid.facerecognition.R
-import com.liqvid.facerecognition.TheCamera
-import com.liqvid.facerecognition.Utils
+import com.liqvid.facerecognition.face_recognition.TheCamera
+import com.liqvid.facerecognition.face_recognition.CameraUtils
 import com.liqvid.facerecognition.face_recognition.InitService
 import com.vdt.face_recognition.sdk.FacerecService
 import com.vdt.face_recognition.sdk.SDKException
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.main_activity_permissions.*
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -95,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cameraId = Utils.getCameraId(baseContext)
+        cameraId = CameraUtils.getCameraId(baseContext)
 
         // observe data
         model.downloadFaceNdkStatus().observe(this, Observer { data ->
@@ -107,6 +104,8 @@ class MainActivity : AppCompatActivity() {
 
 
         setContentView(R.layout.main_activity_permissions)
+
+        button123.setOnClickListener { model.doDownloadFaceNdkIfNeed() }
 
         // check and request main_activity_permissions
         var grantedCount = 0
@@ -123,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         if (grantedCount < permissionsStr.size) {
             ActivityCompat.requestPermissions(this, permissionsStr, 0)
         } else {
-            model.doDownloadFaceNdkIfNeed()
+//            model.doDownloadFaceNdkIfNeed()
 
         }
     }
@@ -199,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }, 2000)
         } else {
-            model.doDownloadFaceNdkIfNeed()
+//            model.doDownloadFaceNdkIfNeed()
         }
     }
 
@@ -251,7 +250,7 @@ class MainActivity : AppCompatActivity() {
 
         btnStart.setOnClickListener {
             val count = Camera.getNumberOfCameras()
-            if (Utils.isCameraAvailable(baseContext)) {
+            if (CameraUtils.isCameraAvailable(baseContext)) {
                 GlobalScope.launch { camera?.open(faceRecognition!!, cameraId, imWidth, imHeight) }
                 Toast.makeText(this, "This device has camera, count of cameras $count", Toast.LENGTH_SHORT).show()
             } else
@@ -259,7 +258,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnStop.setOnClickListener {
-            if (Utils.isCameraAvailable(baseContext)) {
+            if (CameraUtils.isCameraAvailable(baseContext)) {
                 GlobalScope.launch { camera?.close() }
                 Toast.makeText(this, "This device has camera", Toast.LENGTH_SHORT).show()
             } else
@@ -286,7 +285,9 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        btnQuit.setOnClickListener { finishAffinity() }
+        btnQuit.setOnClickListener {
+            finishAffinity()
+        }
     }
 
     private fun setNewResolution(resolution: String) {

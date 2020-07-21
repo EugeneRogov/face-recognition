@@ -1,4 +1,4 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.face_recognition
 
 class Const {
 

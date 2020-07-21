@@ -27,7 +27,7 @@ class UnzipFaceNdkService {
     fun unzip(zipFilePath: String, destDirectory: String, digest: String): Observable<Boolean> {
         return Observable.create { subscriber ->
             try {
-                val hash = ru.liqvid.util.File.calculateMD5(File(zipFilePath))
+                val hash = ru.liqvid.util.FileUtils.calculateMD5(File(zipFilePath))
                 if (hash.equals(digest)) {
                     ZipFile(zipFilePath).extractAll(destDirectory)
                     subscriber.onNext(true)

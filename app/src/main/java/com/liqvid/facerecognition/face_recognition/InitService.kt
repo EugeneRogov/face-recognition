@@ -1,13 +1,10 @@
 package com.liqvid.facerecognition.face_recognition
 
 import android.util.Log
-import com.liqvid.facerecognition.FaceRecognition
-import com.liqvid.facerecognition.TheCamera
 import com.liqvid.facerecognition.ui.MainActivity
 import com.vdt.face_recognition.sdk.FacerecService
 import io.reactivex.rxjava3.core.Observable
 import ru.liqvid.util.Constant
-import java.io.File
 
 class InitService {
     companion object {
@@ -51,7 +48,11 @@ class InitService {
     fun initFaceRecognition(mainActivity: MainActivity, service: FacerecService): Observable<FaceRecognition> {
         return Observable.create { subscriber ->
             try {
-                val faceRecognition = FaceRecognition(mainActivity, service)
+                val faceRecognition =
+                    FaceRecognition(
+                        mainActivity,
+                        service
+                    )
                 subscriber.onNext(faceRecognition)
             } catch (e: Exception) {
                 subscriber.onError(e)
@@ -63,7 +64,10 @@ class InitService {
     fun initCamera(mainActivity: MainActivity): Observable<TheCamera> {
         return Observable.create { subscriber ->
             try {
-                val camera = TheCamera(mainActivity)
+                val camera =
+                    TheCamera(
+                        mainActivity
+                    )
                 subscriber.onNext(camera)
             } catch (e: Exception) {
                 subscriber.onError(e)

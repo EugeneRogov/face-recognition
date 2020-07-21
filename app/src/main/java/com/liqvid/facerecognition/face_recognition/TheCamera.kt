@@ -1,9 +1,8 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.face_recognition
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
@@ -11,6 +10,7 @@ import android.hardware.Camera.PreviewCallback
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import com.liqvid.facerecognition.R
 import com.liqvid.facerecognition.ui.ErrorActivity
 import com.vdt.face_recognition.sdk.SDKException
 import com.vdt.face_recognition.sdk.utils.Converter_YUV_NV_2_ARGB
@@ -34,7 +34,8 @@ class TheCamera(activity: Activity?) : PreviewCallback {
                     try {
                         cam = Camera.open(i)
                         val params = cam.parameters
-                        val camInfo = TheCameraInfo()
+                        val camInfo =
+                            TheCameraInfo()
                         camInfo.id = i
                         camInfo.resolutions = params.supportedPreviewSizes
                         result.add(camInfo)
@@ -118,11 +119,11 @@ class TheCamera(activity: Activity?) : PreviewCallback {
         if (camera == null)
             return
 
-        Log.i(TAG, "TheCamera close")
         camera?.setPreviewCallback(null)
         camera?.stopPreview()
         camera?.release()
         camera = null
+        Log.i(TAG, "TheCamera close")
     }
 
     override fun onPreviewFrame(arg0: ByteArray, arg1: Camera) {

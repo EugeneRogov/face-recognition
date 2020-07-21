@@ -1,10 +1,10 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.face_recognition
 
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
 
-object Utils {
+object CameraUtils {
 
     fun isCameraAvailable(context: Context): Boolean {
         val packageManager: PackageManager = context.packageManager

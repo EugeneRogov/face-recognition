@@ -24,10 +24,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun doDownloadFaceNdkIfNeed() {
-        downloadFaceNdkRepository.loadAndPrepareFaceNdk(
-            context,
-            Constant.FR_DOWNLOAD_URL,
-            "951e87423c2bce28fd59cdf6258dc6f1",
+        downloadFaceNdkRepository.loadAndPrepareFaceNdk(context, Constant.FR_DOWNLOAD_URL, "951e87423c2bce28fd59cdf6258dc6f1",
             object : OnResult {
                 override fun success(v: Boolean) {
                     downloadFaceNdkStatus.value = v

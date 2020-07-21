@@ -1,4 +1,4 @@
-package com.liqvid.facerecognition
+package com.liqvid.facerecognition.face_recognition
 
 import android.app.Activity
 import android.graphics.Bitmap
@@ -7,6 +7,7 @@ import android.util.Pair
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.liqvid.facerecognition.R
 import com.vdt.face_recognition.sdk.*
 import com.vdt.face_recognition.sdk.RawSample.FaceCutType
 import com.vdt.face_recognition.sdk.VideoWorker.TrackingCallback
@@ -15,7 +16,8 @@ import java.lang.Boolean
 import java.util.*
 import java.util.concurrent.LinkedBlockingQueue
 
-class FaceRecognition(private val activity: Activity, service: FacerecService) : TheCameraPainter {
+class FaceRecognition(private val activity: Activity, service: FacerecService) :
+    TheCameraPainter {
 
     companion object {
         val TAG: String = FaceRecognition::class.java.simpleName
